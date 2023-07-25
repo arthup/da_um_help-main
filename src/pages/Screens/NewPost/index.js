@@ -1,32 +1,58 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, Button, Image, Alert  } from 'react-native';
-//import Textarea from 'react-native-textarea';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Alert  } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'
-import { storage } from '../../../Services/firebaseConfig';
-import {ref, uploadBytes, uploadBytesResumable, getDownloadURL, } from 'firebase/storage';
-import firebase from 'firebase/app';
-import 'firebase/storage';
+import { storage, auth, db } from '../../../Services/firebaseConfig';
+import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
+import { Ionicons } from '@expo/vector-icons';
+import { collection, addDoc } from "firebase/firestore"; 
+import moment from 'moment';
 
 const NewPost = () => {
 
-  const [image, setImage] = useState(null)
-  const [uploading, setUploading] = useState(false) 
-  
-  const submitData =() =>{
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [value, setValue] = useState('');
+  const user = auth.currentUser;
+  const date = moment().utcOffset('-03:00').format('DD/MM/YYYY HH:mm:ss');
 
-  // Create the file metadata
-/** @type {any} */
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: false,
+        base64:true,
+        aspect: [4,3],
+        quality: 1,
+        allowsMultipleSelection: true,
+    });
+    const source = result.assets[0].uri
+    setImage(source)
+  }; 
+  
+  const submitData = async () =>{
   const metadata = {
     contentType: 'image/jpeg',
-    includeBase64: true,
   };
-  
-  // Upload file and metadata to the object 'images/mountains.jpg'
-  const storageRef = ref(storage, 'image/' + Date.now());
-  const uploadTask = uploadBytesResumable(storageRef, image, metadata);
-  
 
-  // Listen for state changes, errors, and completion of the upload
+  const getBlobFroUri = async (uri) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    });
+    return blob;
+  };
+
+  const imageBlob = await getBlobFroUri(image);
+  const storageRef = ref(storage, 'image/' + Date.now());
+  const uploadTask = uploadBytesResumable(storageRef, imageBlob, metadata);
+
   uploadTask.on('state_changed',
     (snapshot) => {
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -38,7 +64,10 @@ const NewPost = () => {
           break;
         case 'running':
           console.log('Upload is running');
-          break;
+          if (progress===100){
+            Alert.alert('concluido');
+          }
+          break; 
       }
     }, 
     (error) => {
@@ -51,107 +80,82 @@ const NewPost = () => {
         case 'storage/canceled':
           // User canceled the upload
           break;
-  
-        // ...
-  
         case 'storage/unknown':
           // Unknown error occurred, inspect error.serverResponse
           break;
       }
     }, 
     () => {
-      // Upload completed successfully, now we can get the download URL
-      // getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      //   console.log('File available at', downloadURL);
-      // });
-      getDownloadURL(ref(storage, image))
-  .then((url) => {
-    // `url` is the download URL for 'images/stars.jpg'
-
-    // This can be downloaded directly:
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = 'blob';
-    xhr.onload = (event) => {
-      const blob = xhr.response;
-    };
-    xhr.open('GET', url);
-    xhr.send();
-
-    // Or inserted into an <img> element
-    const img = image;
-    img.setAttribute('source', url);
-  })
-  .catch((error) => {
-    // Handle any errors
-  });
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+        try {
+          const docRef = addDoc(collection(db, "posts"), {
+            userId:user.uid,
+            post: value,
+            postImage: downloadURL,
+            postTime: date,
+            likes: null,
+            comments: null
+          });
+          console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      });
     }
   );
-   }
+}
 
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4,3],
-        quality: 1
-    });
-    const source = result.assets[0].uri
-    console.log(source)
-    setImage(source)
-}; 
 
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView>
+        <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
     
-    <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
+        <View style={styles.container}>
 
-      <View style={styles.header}>
-          <Text style={styles.headerText}>Criar Publicação</Text>
-      </View>
+          <View style={styles.body}>
 
-      <View style={styles.body}>
-          {/* <Textarea
-            containerStyle={styles.textareaContainer}
-            style={styles.textarea}
-            placeholder={'O que você está precisando...'}
-            placeholderTextColor={'#A2ACC3'}
-  underlineColorAndroid={'transparent'}*/}
-  <TouchableOpacity onPress={pickImage}>
-    <Text style={styles.btnText}>Pick an Image</Text> 
-  </TouchableOpacity>
-  <View style={styles.imageContainer}>
-   {image && <Image source={{uri:image.uri}} style={{width: 300, height: 300}}/>} 
-  <TouchableOpacity onPress={submitData}>
-      <Text style={styles.btnText}>Upload Image</Text> 
-  </TouchableOpacity> 
-  </View>
-      </View>
-      
-   </SafeAreaView>
+            <View style={styles.buttonPick}>
+              <TouchableOpacity onPress={pickImage}>
+                  <Ionicons name="md-images-outline" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.textAreaContainer}>
+              <TextInput   
+                multiline
+                numberOfLines= {20}
+                maxLength={280}
+                onChangeText={text => setValue(text)}
+                value={value}
+                style={styles.textArea}
+                placeholder='Do que você está precisando?'
+              />
+            </View>
+
+            <View style={styles.image}>
+              {image && <Image source={{uri:image}} style={{width: '100%', height: '100%', borderRadius: 20}}/>} 
+            </View>        
+              
+            <TouchableOpacity onPress={submitData}  style={styles.btnUpload}>
+              <Text style={styles.btnText}>Upload Image</Text> 
+            </TouchableOpacity>
+
+  
+          </View>
+        </View>
+    
+    </SafeAreaView>
+   </TouchableWithoutFeedback>
   );
 }
 
 export default NewPost;
 
 const styles = StyleSheet.create({
-  header:{
-    backgroundColor:'#4FB9FF',
-    width: '100%',
-    height: '30%',
-    alignItems:'center',
-    flexDirection:'row',
-    flex:0.5
-  
-  },
-  
-  headerText:{
-    color:'#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: "5%"
-  },
+
 
   container:{
     backgroundColor: '#f0f8ff',
@@ -160,25 +164,67 @@ const styles = StyleSheet.create({
   },
 
   body:{
-    flex: 5
+    alignItems: 'center',
   },
   
-  textareaContainer: {
-    height: 180,
+  textAreaContainer: {
+    height: 200,
+    padding: 5,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    width:'100%',
+    margin: 9,
+
+  },
+
+  textArea:{
+    padding: 5,
+    textAlign:'justify',
+    fontSize: 18,
+    textAlignVertical:'top'
+  },
+
+  border: {
+    alignItems: 'rigth',
+    height: 60,
     padding: 5,
     backgroundColor: 'white',
     borderWidth: 1,
+    borderColor: 'gray',
     borderRadius: 20,
     width:'95%',
     alignSelf: 'center',
-    marginTop: 9
+    marginTop: 9,
   },
 
-  textarea: {
-    textAlignVertical: 'top',  // hack android
-    height: 170,
-    fontSize: 14,
-    color: 'black',
+  image:{
+    width:200,
+    height:200,
+  },
+
+  btnUpload:{
+    backgroundColor: '#4FB9FF',
+    margin: 2,
+    alignItems: 'center',
+    height: 20,
+    width: 90,
+    borderWidth: 0.5,
+    borderColor: 'gray',
+    borderRadius: 5,
+  
+  },
+
+  buttonPick: {
+    alignItems: 'flex-end',
+    justifyContent:'center',
+    height: '15%',
+    width: '95%',
+  
+  },
+
+  btnText:{
+    color:'#ffffff',
+    fontSize: 12,
   },
   
   });

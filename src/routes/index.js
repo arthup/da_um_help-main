@@ -1,5 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from '../pages/SignIn';
+import Images from '../pages/SignIn/Images';
+import Docments from '../pages/SignIn/Documents';
 import Welcome from '../pages/Welcome';
 import LogIn from '../pages/LogIn';
 import Selection from '../pages/Selection';
@@ -34,6 +36,18 @@ export default function Routes(){
             <Stack.Screen
                 name="Selection"
                 component={Selection}
+                options={{ headerShown: false}}
+            />
+
+            <Stack.Screen
+                name="Images"
+                component={Images}
+                options={{ headerShown: false}}
+            />
+
+            <Stack.Screen
+                name="Documents"
+                component={Docments}
                 options={{ headerShown: false}}
             />
 

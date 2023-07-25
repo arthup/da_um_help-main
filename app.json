@@ -29,6 +29,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/LO2.png",
         "backgroundColor": "#619dfd"
+        
       }
     },
     "web": {

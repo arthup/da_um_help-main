@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import Home from '../pages/Screens/Home/index.js';
@@ -26,7 +26,8 @@ export default function Routes(){
                 tabBarStyle:{
                     paddingTop: 9,
                     paddingBottom: 2
-                }
+                },
+                tabBarHideOnKeyboard:true
             }}
         >
                 <Tab.Screen
@@ -54,9 +55,14 @@ export default function Routes(){
                 />
 
                 <Tab.Screen
-                    name="Adicionar"
+                    name="Criar Publicação"
                     component={NewPost}
-                    options={{ headerShown: false,
+                    options={{ 
+                        headerShown: true,
+                        headerStyle:({
+                            backgroundColor:"#4FB9FF", 
+                        }),
+                        headerTintColor:'#fff',
                         tabBarLabel:'',
                         tabBarIcon:({size, color}) =>(
                             <View style={styles.container}>

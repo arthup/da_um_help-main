@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFe
 import * as Animatable from 'react-native-animatable';
 import {useNavigation} from '@react-navigation/native';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import {auth} from '../../Services/firebaseConfig';
+import { auth, db } from '../../Services/firebaseConfig';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { doc, setDoc } from "firebase/firestore";
 
 
 const SignIn = () => {
@@ -13,19 +14,51 @@ const SignIn = () => {
     const [password_confirm, setPassword_confirm] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [value, setValue] = useState('');
     const [error, setError] = useState(false);
     const [passHide, setpassHide] = useState(true);
     const [passHide2, setpassHide2] = useState(true);
 
+    
     const handleSignIn = () =>{
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
             updateProfile(auth.currentUser, {
                 displayName: name
-            }).then(() => {
-                console.log('usuario criado')
-                navigation.navigate('Screens')
+            }
+         
+            ).then(() => {
+                console.log('usuario criado');
+                try {
+                    const docRef =  {
+                      userId:user.uid,
+                      name: name,
+                      email: email,
+                      password: password,
+                      cpf: null,
+                      rg: null,
+                      dataNasc: null,
+                      telefone: null,
+                      cep: null,
+                      estado: null,
+                      cidade: null,
+                      bairro: null,
+                      numero: null,
+                      rua: null,
+                      complemento: null,
+                      userImg: null,
+                      userBackgorundImg: null,
+                    };
+
+                    setDoc(doc(db, "users", user.uid), docRef);
+
+                    console.log("Document written with ID: ", docRef.id);
+                  } catch (e) {
+                    console.error("Error adding document: ", e);
+                  }
+                  navigation.navigate('Documents')
             }).catch((error) => {
             });
         })
@@ -46,21 +79,21 @@ const SignIn = () => {
 
             <Animatable.View animation="fadeInUp" style={styles.containerForm}>
                 
-                    {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
-                    <TextInput
-                        placeholder='Nome Completo '
-                        style={styles.input}
-                        value={name}
-                        onChangeText={(text) => setName(text) && (error == false && name ==="")}
-                    />
+                {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
+                <TextInput
+                    placeholder='Nome Completo '
+                    style={styles.input}
+                    value={name}
+                    onChangeText={(text) => setName(text) && (error == false && name ==="")}
+                />
             
-                    {error == true && email==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
-                    <TextInput
-                        placeholder='Email'
-                        style={styles.input}
-                        value={email}
-                        onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
-                    />
+                {error == true && email==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
+                <TextInput
+                    placeholder='Email'
+                    style={styles.input}
+                    value={email}
+                    onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
+                />
              
 
                 {error == true && password==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
@@ -90,7 +123,6 @@ const SignIn = () => {
                         value={password_confirm}
                         secureTextEntry={passHide2}
                         onChangeText={(text) => setPassword_confirm(text) && (error == false && password_confirm ==="" )}
-
                     />
 
                     <TouchableOpacity  onPress={() => setpassHide2(!passHide2)}>
@@ -98,7 +130,6 @@ const SignIn = () => {
                     </TouchableOpacity> 
                 </View>
 
-                
                     { name === "" || email === "" || password === "" || password_confirm === "" || password !== password_confirm
                     ? 
                     <TouchableOpacity 
@@ -112,7 +143,7 @@ const SignIn = () => {
                         style={styles.buttonRegister}
                         onPress={handleSignIn} 
                     >
-                        <Text style={styles.buttonRegisterText}>Cadastrar</Text>
+                        <Text style={styles.buttonRegisterText}>Continuar</Text>
                     </TouchableOpacity>
                     }
                 
