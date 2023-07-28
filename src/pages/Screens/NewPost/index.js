@@ -126,18 +126,15 @@ const NewPost = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView>
+      <SafeAreaView  style={styles.corbonita}>
         <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
-    
+        <View>
+          <Text style={styles.message}>Crie sua Postagem</Text>
+        </View>
         <View style={styles.container}>
 
-          <View style={styles.body}>
 
-            <View style={styles.buttonPick}>
-              <TouchableOpacity onPress={pickImage}>
-                  <Ionicons name="md-images-outline" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
+
 
             <View style={styles.textAreaContainer}>
               <TextInput   
@@ -150,9 +147,16 @@ const NewPost = () => {
                 placeholder='Do que você está precisando?'
               />
             </View>
+            <View style={styles.buttonPick}>
+
+            <Text style={styles.textolegal}>Adicione uma imagem:</Text>
+              <TouchableOpacity onPress={pickImage}>
+                  <Ionicons name="md-images-outline" size={24} color="gray" />
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.image}>
-              {image && <Image source={{uri:image}} style={{width: '100%', height: '100%', borderRadius: 20}}/>} 
+              {image && <Image source={{uri:image}} style={{width: '140%', height: '140%', borderRadius: 20}}/>} 
             </View>        
               
             <TouchableOpacity onPress={submitData}  style={styles.btnUpload}>
@@ -161,7 +165,6 @@ const NewPost = () => {
 
   
           </View>
-        </View>
     
     </SafeAreaView>
    </TouchableWithoutFeedback>
@@ -171,24 +174,38 @@ const NewPost = () => {
 export default NewPost;
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
+=======
+
+
+  corbonita:{
+    backgroundColor:"#4FB9FF",
+    height: "100%"
+  },
+
+>>>>>>> 344050eef0145c1cfa53ba5cfb4f672769b1c2c8
   container:{
+    marginTop: 30,
     backgroundColor: '#f0f8ff',
     width: '100%',
     height: '100%',
-  },
-
-  body:{
-    alignItems: 'center',
+    borderRadius: 20,
+  }, 
+  image:{
+    alignItems:`center`,
+    width:200,
+    height:200,
+    alignSelf:'center'
   },
   
   textAreaContainer: {
+    marginTop: 40,
     height: 200,
     padding: 5,
     backgroundColor: 'white',
     borderRadius: 20,
-    width:'100%',
-    margin: 9,
-
+    width:'90%',
+    alignSelf: "center",
   },
 
   textArea:{
@@ -198,34 +215,24 @@ const styles = StyleSheet.create({
     textAlignVertical:'top'
   },
 
-  border: {
-    alignItems: 'rigth',
-    height: 60,
-    padding: 5,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 20,
-    width:'95%',
-    alignSelf: 'center',
-    marginTop: 9,
-  },
-
-  image:{
-    width:200,
-    height:200,
-  },
-
   btnUpload:{
-    backgroundColor: '#4FB9FF',
-    margin: 2,
     alignItems: 'center',
-    height: 20,
-    width: 90,
-    borderWidth: 0.5,
-    borderColor: 'gray',
-    borderRadius: 5,
-  
+    height: "7.5%",
+    backgroundColor:"#619dfd",
+    width: '80%',
+    alignSelf:'center',
+    borderRadius: 50,
+    paddingVertical: 14,
+    justifyContent: 'center',
+    marginTop: 110
+  },
+
+  textolegal:{
+    color: "gray",
+    fontWeight: "bold",
+    fontSize: 15,
+    marginBottom: 5,
+    marginRight: "40%"
   },
 
   buttonPick: {
@@ -233,12 +240,24 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     height: '15%',
     width: '95%',
-  
+    flexDirection: "row",
+    marginTop: "-16%",
+    marginBottom: 25,
   },
 
   btnText:{
     color:'#ffffff',
-    fontSize: 12,
+    fontSize: 18,
+    fontWeight: "bold"
+  },    
+  
+  message:{  
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: 12,
+    marginBottom: 0,
+    marginLeft: 20,
   },
   
   });

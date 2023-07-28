@@ -55,10 +55,10 @@ export default function Routes(){
                 />
 
                 <Tab.Screen
-                    name="Criar Publicação"
+                    name="Crie sua Postagem"
                     component={NewPost}
                     options={{ 
-                        headerShown: true,
+                        headerShown: false,
                         headerStyle:({
                             backgroundColor:"#4FB9FF", 
                         }),
