@@ -33,6 +33,7 @@ const NewPost = () => {
     contentType: 'image/jpeg',
   };
 
+  if (image ==! null){
   const getBlobFroUri = async (uri) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -103,7 +104,22 @@ const NewPost = () => {
         }
       });
     }
-  );
+  ); 
+} else{
+  try {
+    const docRef = addDoc(collection(db, "posts"), {
+      userId:user.uid,
+      post: value,
+      postImage: null,
+      postTime: date,
+      likes: null,
+      comments: null
+    });
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
 }
 
 
@@ -155,8 +171,6 @@ const NewPost = () => {
 export default NewPost;
 
 const styles = StyleSheet.create({
-
-
   container:{
     backgroundColor: '#f0f8ff',
     width: '100%',

@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import Home from '../pages/Screens/Home/index.js';
+import Home from '../pages/Screens/Home/index';
 import Message from '../pages/Screens/Message/index';
 import NewPost from '../pages/Screens/NewPost/index';
 import Profile from '../pages/Screens/Profile/index';
@@ -34,7 +34,7 @@ export default function Routes(){
                     name="Inicio"
                     component={Home}
                     options={{ 
-                        headerShown: false,
+                        headerShown: true,
                         tabBarLabel:'', 
                         tabBarIcon:({size, color}) =>(
                             <Entypo name="home" size={size} color={color} />

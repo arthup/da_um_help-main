@@ -1,26 +1,55 @@
-import React, {useEffect, useState} from 'react';
-import { View, Text, StyleSheet, Button, SafeAreaView, Image, StatusBar,FlatList, ActivityIndicator } from 'react-native';
-import { signOut } from "firebase/auth";
-import  { auth } from '../../../Services/firebaseConfig';
-import {useNavigation} from '@react-navigation/native';
-import { Header, Icon } from '@rneui/base';
-import { Entypo, FontAwesome, Ionicons, AntDesign } from '@expo/vector-icons'; 
-import axios from 'axios';
-import { Container, Card, UserInfo, UserImg } from './FeedStyle'
+import React from 'react';
+import { FlatList } from 'react-native';
+import { Container } from './FeedStyle.js';
+import { PostCard } from './PostCard.js';
+
+const Posts = [
+  {
+    id: '1',
+    userName: 'Jenny Doe',
+    userImg: require('../../../assets/faxineiro.jpg'),
+    postTime: '4 mins ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: require('../../../assets/faxineiro.jpg'),
+    likes: '14',
+    comments: '5',
+  },
+  {
+    id: '2',
+    userName: 'John Doe',
+    userImg: require('../../../assets/faxineiro.jpg'),
+    postTime: '2 hours ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: 'none',
+    likes: '8',
+    comments: '0',
+  },
+  {
+    id: '3',
+    userName: 'Ken William',
+    userImg: require('../../../assets/faxineiro.jpg'),
+    postTime: '1 hours ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: require('../../../assets/faxineiro.jpg'),
+    likes: '1',
+    comments: '0',
+  }
+]
 
 const Home = () => {
-
-  const user = auth.currentUser;
-  const navigation = useNavigation();
-  const foto = user.photoURL;
-
+ 
   return (
     <Container>
-      <Card>
-        <UserInfo>
-          <UserImg source={{uri: foto}}/>
-        </UserInfo>
-      </Card>
+      <FlatList
+        data={Posts}
+        renderItem={({item}) => <PostCard item={item}/>}
+        keyExtractor={item=> item.id}
+        showsVerticalScrollIndicator={false}
+        style={{width: "105%"}}
+      />
     </Container>
   );
 }

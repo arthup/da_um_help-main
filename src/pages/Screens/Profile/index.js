@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { signOut, updateProfile } from "firebase/auth";
 import  { auth, storage } from '../../../Services/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Button, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, Button, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
 const Profile = () => {
+
   const user = auth.currentUser;
   const [image, setImage] = useState(null);
   const foto = user.photoURL;  
@@ -51,24 +52,165 @@ const Profile = () => {
 }
 
   return (
-    <SafeAreaView>
-      <View style={{backgroundColor:'green'}}>
-          <Text>TELA DE PERFIL</Text>
-          <Text>{displayName}</Text>
-          <Text>{email}</Text>
-          <Text>{user.photoURL}</Text>
-          <Image source={{uri: foto}} style={{width: '10%', height: '10%', borderRadius: 20}}/>
-          <Button onPress={LogOut} title='enviar'></Button>
+    <View style={styles.container}>
+
+        <TouchableOpacity style={styles.imageBackground}>
+          <Image source={require("../../../assets/azul.jpg")} style={styles.backgroundImage}></Image>
+        </TouchableOpacity>
+
+      <View style={styles.perfil}>
+        <Image source={require("../../../assets/perfil.jpg")} style={styles.imagePerfil}></Image>
       </View>
 
-      <View>
-        <Button onPress={pickImage} title='pegar'/>
-        <Button onPress={submitData} title='salvar'/>
-        <Image source={{uri:image}} style={{width: '100%', height: '100%', borderRadius: 20}}/>
+      <View style={styles.perfildois}>
+        <Text style={styles.nomeUsuario}>Perfil Teste</Text>
+        <TouchableOpacity onPress={()=>(navigation.navigate('EditProfile'))}>
+          <Image source={require("../../../assets/edita.png")} style={styles.iconEditar}></Image>
+        </TouchableOpacity>
       </View>
 
-    </SafeAreaView>
+      <View style={styles.perfil}>
+        <Text style={styles.arrobaUsuario}>@perfil_teste</Text>
+      </View>
+
+      <View style={styles.profissao}>
+        <Image source={require("../../../assets/pincel.png")} style={styles.iconProfissao}></Image>
+        <Text style={styles.txtProfissao}>Pintor profissional</Text>
+      </View>
+
+      <View style={styles.profissao}>
+        <Image source={require("../../../assets/localizacao.png")} style={styles.iconProfissao}></Image>
+        <Text style={styles.txtProfissao}>Localizacao</Text>
+      </View>
+
+      <View style={styles.espacinho}/>
+
+      <Button onPress={LogOut} title='enviar'></Button>
+
+    </View>
+
+
   );
 }
 
 export default Profile;
+
+const styles=StyleSheet.create({
+  container:{
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  imageBackground:{
+    alignItems: 'center',
+    width: "100%",
+    height: 200,
+    flex: 1,
+    borderRadius: 20,
+  },
+
+  backgroundImage:{
+    width: "100%",
+    height: 200,
+    borderRadius: 20,
+    marginTop: -12,
+    alignSelf: 'center',
+  },
+
+  perfil:{
+    alignItems: "center",
+  },
+
+  perfildois:{
+    alignSelf: "center", 
+    alignItems: "center",
+    flexDirection: "row", 
+    justifyContent: "center",
+    marginTop: 80,
+    alignSelf: 'center',
+  },
+
+  iconEditar:{
+    width: 20,
+    height: 20,
+    marginTop: 10,
+    marginLeft: 5,
+  },
+
+  imagePerfil:{
+    width: 130, 
+    height: 130, 
+    borderRadius: 100, 
+    borderWidth: 4,
+    borderColor: 'blue',
+    marginTop: -80,
+    alignSelf: 'center',
+  },
+
+  nomeUsuario:{
+    fontSize: 20, 
+    fontWeight: "bold", 
+    padding: 10,
+    alignSelf: 'center',
+    marginTop: -110,
+  },
+
+  arrobaUsuario:{
+    fontSize: 15, 
+    fontWeight: "bold", 
+    color: "gray",
+    alignSelf: 'center',
+  },
+
+  estilizaFollow:{
+    marginTop: 15,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignSelf: 'center',
+  },
+
+  follow:{
+    flexDirection: "column",
+    alignItems: "center",
+    marginHorizontal: 22,
+  },
+
+  seguindo:{
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+
+  seguindoDois:{
+    fontSize: 15,
+  },
+
+  profissao:{
+    alignSelf: "center", 
+    alignItems: "center",
+    flexDirection: "row", 
+    justifyContent: "center", 
+    backgroundColor: "#fff", 
+    width: "90%", 
+    paddingBottom: 12, 
+    paddingTop: 12,
+    borderRadius: 10, 
+    shadowOpacity: 80, 
+    elevation: 15, 
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+
+  txtProfissao:{
+    alignSelf: 'center',
+  },
+
+  iconProfissao:{
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+
+  espacinho:{
+    padding: 40,
+  }
+})

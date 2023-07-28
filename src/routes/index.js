@@ -4,6 +4,7 @@ import Images from '../pages/SignIn/Images';
 import Docments from '../pages/SignIn/Documents';
 import Welcome from '../pages/Welcome';
 import LogIn from '../pages/LogIn';
+import EditProfile from '../pages/Screens/Profile/editProfile';
 import Selection from '../pages/Selection';
 import Screens from '../pages/Screens';
 import React from 'react';
@@ -54,6 +55,12 @@ export default function Routes(){
             <Stack.Screen
                 name="Screens"
                 component={Screens}
+                options={{ headerShown: false}}
+            />
+
+            <Stack.Screen
+                name="EditProfile"
+                component={EditProfile}
                 options={{ headerShown: false}}
             />
         </Stack.Navigator>
