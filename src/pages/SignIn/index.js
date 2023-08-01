@@ -107,7 +107,7 @@ const SignIn = () => {
                     />
                     
                     <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
-                        <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="black"/>
+                        <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
                     </TouchableOpacity> 
                 </View>
 
@@ -126,7 +126,7 @@ const SignIn = () => {
                     />
 
                     <TouchableOpacity  onPress={() => setpassHide2(!passHide2)}>
-                        <FontAwesome5 name={passHide2 ? 'eye' : 'eye-slash'} size={20} color="black"/>
+                        <FontAwesome5 name={passHide2 ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
                     </TouchableOpacity> 
                 </View>
 
@@ -136,14 +136,14 @@ const SignIn = () => {
                         style={styles.buttonRegister}
                         onPress={() => (setError(true))}
                     >
-                        <Text style={styles.buttonRegisterText}>Cadastrar</Text>
+                        <Text style={styles.buttonRegisterText}>Prosseguir</Text>
                     </TouchableOpacity>
                     : 
                     <TouchableOpacity 
                         style={styles.buttonRegister}
                         onPress={handleSignIn} 
                     >
-                        <Text style={styles.buttonRegisterText}>Continuar</Text>
+                        <Text style={styles.buttonRegisterText}>Prosseguir</Text>
                     </TouchableOpacity>
                     }
                 

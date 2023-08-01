@@ -69,7 +69,7 @@ const Docments = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.container}>
                         <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-                            <Text style={styles.message}>Crie sua conta!</Text>
+                            <Text style={styles.message}>Informações Pessoais</Text>
                         </Animatable.View>
 
                         <Animatable.View animation="fadeInUp" style={styles.containerForm}>
@@ -102,7 +102,7 @@ const Docments = () => {
                                 />
                                 
                                 <TouchableOpacity onPress={() => showMode('date')}>
-                                    <FontAwesome5 name="calendar-day" size={24} color="black" />
+                                    <FontAwesome5 name="calendar-day" size={24} color="#A2ACC3"/>
                                 </TouchableOpacity> 
                                 {show && (
                                     <DateTimePicker
@@ -177,14 +177,14 @@ const Docments = () => {
                                     style={styles.buttonRegister}
                                     onPress={() => (setError(true))}
                                 >
-                                    <Text style={styles.buttonRegisterText}>Concluir</Text>
+                                    <Text style={styles.buttonRegisterText}>Prosseguir</Text>
                                 </TouchableOpacity>
                                 :
                                 <TouchableOpacity 
                                     style={styles.buttonRegister}
                                     onPress={submitIinfo}
                                 >
-                                    <Text style={styles.buttonRegisterText}>Concluir</Text>
+                                    <Text style={styles.buttonRegisterText}>Prosseguir</Text>
                                 </TouchableOpacity>
                                 }
                             </View>

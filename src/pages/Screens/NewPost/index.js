@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Alert  } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'
 import { storage, auth, db } from '../../../Services/firebaseConfig';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
@@ -106,36 +106,34 @@ const NewPost = () => {
     }
   ); 
 } else{
-  try {
-    const docRef = addDoc(collection(db, "posts"), {
-      userId:user.uid,
-      post: value,
-      postImage: null,
-      postTime: date,
-      likes: null,
-      comments: null
-    });
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
+    try {
+      const docRef = addDoc(collection(db, "posts"), {
+        userId:user.uid,
+        post: value,
+        postImage: null,
+        postTime: date,
+        likes: null,
+        comments: null
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   }
-}
-}
-
-
+};
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView  style={styles.corbonita}>
+      
+      <SafeAreaView  style={styles.backColor}>
         <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
+
         <View>
-          <Text style={styles.message}>Crie sua Postagem</Text>
+          <Text style={styles.textHeader}>Crie sua Postagem</Text>
         </View>
+
         <View style={styles.container}>
-
-
-
-
+        
             <View style={styles.textAreaContainer}>
               <TextInput   
                 multiline
@@ -147,26 +145,28 @@ const NewPost = () => {
                 placeholder='Do que você está precisando?'
               />
             </View>
-            <View style={styles.buttonPick}>
 
-            <Text style={styles.textolegal}>Adicione uma imagem:</Text>
-              <TouchableOpacity onPress={pickImage}>
-                  <Ionicons name="md-images-outline" size={24} color="gray" />
-              </TouchableOpacity>
+            <View style={styles.buttonPickImage}>
+              <Text style={styles.textButton}>Adicione uma imagem:</Text>
+                <TouchableOpacity onPress={pickImage}>
+                    <Ionicons name="md-images-outline" size={24} color="gray" />
+                </TouchableOpacity>
             </View>
 
-            <View style={styles.image}>
+            <View style={styles.containerImage}>
               {image && <Image source={{uri:image}} style={{width: '140%', height: '140%', borderRadius: 20}}/>} 
-            </View>        
-              
-            <TouchableOpacity onPress={submitData}  style={styles.btnUpload}>
-              <Text style={styles.btnText}>Upload Image</Text> 
-            </TouchableOpacity>
+            </View>     
 
-  
+            <View style={styles.buttonUpload}>
+              <TouchableOpacity onPress={submitData}  >
+                <Text style={styles.btnText}>Upload Image</Text> 
+              </TouchableOpacity>
+            </View>
+           
           </View>
-    
+        
     </SafeAreaView>
+    
    </TouchableWithoutFeedback>
   );
 }
@@ -174,16 +174,12 @@ const NewPost = () => {
 export default NewPost;
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-=======
 
-
-  corbonita:{
+  backColor:{
     backgroundColor:"#4FB9FF",
-    height: "100%"
+    height: '100%'
   },
 
->>>>>>> 344050eef0145c1cfa53ba5cfb4f672769b1c2c8
   container:{
     marginTop: 30,
     backgroundColor: '#f0f8ff',
@@ -191,11 +187,14 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 20,
   }, 
-  image:{
-    alignItems:`center`,
-    width:200,
-    height:200,
-    alignSelf:'center'
+
+  containerImage:{
+    alignItems:'center',
+    width:'50%',
+    height:'30%',
+    alignSelf:'center',
+    flex:1
+
   },
   
   textAreaContainer: {
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'top'
   },
 
-  btnUpload:{
+  buttonUpload:{
     alignItems: 'center',
     height: "7.5%",
     backgroundColor:"#619dfd",
@@ -224,10 +223,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingVertical: 14,
     justifyContent: 'center',
-    marginTop: 110
+  
   },
 
-  textolegal:{
+  textButton:{
     color: "gray",
     fontWeight: "bold",
     fontSize: 15,
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
     marginRight: "40%"
   },
 
-  buttonPick: {
+  buttonPickImage: {
     alignItems: 'flex-end',
     justifyContent:'center',
     height: '15%',
@@ -245,13 +244,13 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 
-  btnText:{
+  buttonText:{
     color:'#ffffff',
     fontSize: 18,
     fontWeight: "bold"
   },    
   
-  message:{  
+  textHeader:{  
     fontSize: 28,
     fontWeight: 'bold',
     color: 'white',

@@ -54,23 +54,23 @@ const Profile = () => {
   return (
     <View style={styles.container}>
 
-        <TouchableOpacity style={styles.imageBackground}>
-          <Image source={require("../../../assets/azul.jpg")} style={styles.backgroundImage}></Image>
+        <TouchableOpacity style={styles.containerImageBackground}>
+          <Image source={require("../../../assets/azul.jpg")} style={styles.imageBackground}></Image>
         </TouchableOpacity>
 
-      <View style={styles.perfil}>
-        <Image source={require("../../../assets/perfil.jpg")} style={styles.imagePerfil}></Image>
+      <View style={styles.containerProfile}>
+        <Image source={require("../../../assets/perfil.jpg")} style={styles.imageProfile}></Image>
       </View>
 
-      <View style={styles.perfildois}>
-        <Text style={styles.nomeUsuario}>Perfil Teste</Text>
+      <View style={styles.containerUserName}>
+        <Text style={styles.userName}>Perfil Teste</Text>
         <TouchableOpacity onPress={()=>(navigation.navigate('EditProfile'))}>
-          <Image source={require("../../../assets/edita.png")} style={styles.iconEditar}></Image>
+          <Image source={require("../../../assets/edita.png")} style={styles.icon}></Image>
         </TouchableOpacity>
       </View>
 
       <View style={styles.perfil}>
-        <Text style={styles.arrobaUsuario}>@perfil_teste</Text>
+        <Text style={styles.bio}>@perfil_teste</Text>
       </View>
 
       <View style={styles.profissao}>
@@ -101,7 +101,7 @@ const styles=StyleSheet.create({
     alignItems: 'center',
   },
 
-  imageBackground:{
+  containerImageBackground:{
     alignItems: 'center',
     width: "100%",
     height: 200,
@@ -109,7 +109,7 @@ const styles=StyleSheet.create({
     borderRadius: 20,
   },
 
-  backgroundImage:{
+  imageBackground:{
     width: "100%",
     height: 200,
     borderRadius: 20,
@@ -117,11 +117,11 @@ const styles=StyleSheet.create({
     alignSelf: 'center',
   },
 
-  perfil:{
+  containerProfile:{
     alignItems: "center",
   },
 
-  perfildois:{
+  containerUserName:{
     alignSelf: "center", 
     alignItems: "center",
     flexDirection: "row", 
@@ -130,14 +130,14 @@ const styles=StyleSheet.create({
     alignSelf: 'center',
   },
 
-  iconEditar:{
+  icon:{
     width: 20,
     height: 20,
     marginTop: 10,
     marginLeft: 5,
   },
 
-  imagePerfil:{
+  imageProfile:{
     width: 130, 
     height: 130, 
     borderRadius: 100, 
@@ -147,7 +147,7 @@ const styles=StyleSheet.create({
     alignSelf: 'center',
   },
 
-  nomeUsuario:{
+  userName:{
     fontSize: 20, 
     fontWeight: "bold", 
     padding: 10,
@@ -155,7 +155,7 @@ const styles=StyleSheet.create({
     marginTop: -110,
   },
 
-  arrobaUsuario:{
+  bio:{
     fontSize: 15, 
     fontWeight: "bold", 
     color: "gray",

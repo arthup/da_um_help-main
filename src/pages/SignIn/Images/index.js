@@ -30,15 +30,6 @@ const Imag = () => {
     setImage(source);
     };
     
-    
-
-
-
-
-
-
-    
-
     const pickImage2 = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -189,28 +180,25 @@ const Imag = () => {
           <SafeAreaView style={styles.container}>
 
             <View style={styles.containerHeader}>
-              <Text style={styles.textHeader}>Escolha sua foto de perfil!</Text> 
+              <Text style={styles.textHeader}>Foto de Perfil</Text> 
             </View>
-
             
-            <View style={styles.containerImg}>
-              <TouchableOpacity onPress={pickImage2} style={styles.buttonBackgroundImg}>
-                {image2===null ? <Image source={require('../../../assets/fundo.png')} style={styles.backgroundImg}/> : <Image source={{uri:image2}} style={styles.backgroundImg}/> }
-              </TouchableOpacity>
+            <View style={styles.containercerto}>
+              <View style={styles.containerImg}>
+                <TouchableOpacity onPress={pickImage2} style={styles.buttonBackgroundImg}>
+                  {image2===null ? <Image source={require('../../../assets/maizao.png')} style={styles.backgroundImg}/> : <Image source={{uri:image2}} style={styles.backgroundImg}/> }
+                </TouchableOpacity>
 
+                <TouchableOpacity onPress={pickImage} style={styles.buttonImgProfile}>
+                  {image===null ? <Image source={require('../../../assets/perfilcerto.png')} style={styles.profileImg}/> : <Image source={{uri:image}} style={styles.profileImg}/> }
+                </TouchableOpacity>           
+              </View>
 
-              <TouchableOpacity onPress={pickImage} style={styles.buttonImgProfile}>
-                {image===null ? <Image source={require('../../../assets/perfil3.png')} style={styles.profileImg}/> : <Image source={{uri:image}} style={styles.profileImg}/> }
-              </TouchableOpacity>   
-
-                       
-            </View>
-
-            
               <TouchableOpacity style={styles.button} onPress={submitData}>
                 <Text style={styles.buttonText}>Concluir</Text>
               </TouchableOpacity>
-             
+            </View>
+
           </SafeAreaView>
         </TouchableWithoutFeedback>
     )
@@ -222,34 +210,42 @@ const styles = StyleSheet.create({
     container:{
       flex:1,
       alignItems: "center",
-      backgroundColor: "#d6e9ff",
-
+      backgroundColor: "#619dfd",
     },
+
+    containercerto:{
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      backgroundColor: "#d6e9ff",
+      borderTopLeftRadius: 25,
+      borderTopRightRadius: 25,
+    },
+
     containerImg:{
       marginTop: '10%',
-      width:'95%',
-      height:'40%',
-      borderWidth:1,
+      width:'90%',
+      height:'30%',
       borderRadius:25,
       alignItems:'center',
       justifyContent:'flex-end',
-      
     },
 
     buttonImgProfile:{
       borderRadius: 100,
-      borderWidth:1,
-      width: '50%',
-      height: '60%',
+      width: '45%',
+      height: '70%',
       position:'absolute',
-      bottom:-50
+      bottom:-70,
+      borderWidth: 0.5
     },
 
     profileImg:{
       alignSelf:'center',
       width:'100%',
       height:'100%',
-      borderRadius: 100
+      borderRadius: 100,
+      backgroundColor: "#ABD3F6"
     },
 
     buttonBackgroundImg:{
@@ -260,6 +256,7 @@ const styles = StyleSheet.create({
       borderRadius:25,
       position:'relative'
     },
+    
     backgroundImg:{
       alignSelf:'center',
       width:'100%',
@@ -269,20 +266,17 @@ const styles = StyleSheet.create({
     },
 
     containerHeader:{
-      backgroundColor: '#619dfd',
-      width:'100%',
-      height:'10%',
-      paddingStart:14,
-      justifyContent:'center'
+      marginTop: '14%',
+      marginBottom: '8%',
+      paddingStart: '5%',
+      width: "100%"
     },
 
     textHeader:{
-      fontSize:24,
-      color: 'white',
-      fontWeight:'bold'
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#d6e9ff',
     },
-
-
 
     button:{
       marginTop: '60%',
