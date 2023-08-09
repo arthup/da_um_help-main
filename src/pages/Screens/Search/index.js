@@ -3,30 +3,28 @@ import {View, ScrollView, Image, StyleSheet, TextInput, TouchableOpacity, Status
 import { FontAwesome5 } from '@expo/vector-icons';
 
 const Search = () =>{
-    return (
-
-      <View style={styles.container}>
-        <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
-          <View style={styles.containerHeader}>
-              
-              
-
+  function handleKeyPress(e){
+    var key = e.key
+    if (key === 'Enter'){
+    console.log("pressionado")
+  }}
+  return (
+    <View style={styles.container}>
+      <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
+        <View style={styles.containerHeader}> 
               <TouchableOpacity>
-                <FontAwesome5 name="search" size={24} style={styles.iconPesquisa}/> 
-              </TouchableOpacity> 
+                <FontAwesome5 name="search" size={26} style={styles.iconPesquisa}/> 
+              </TouchableOpacity>
 
               <TextInput
                 placeholder='Pesquisar'
                 style={styles.barraPesquisa}
+                onKeyPress={(e) => handleKeyPress(e)}
               />
-          </View>
-
-          <View style={styles.espacinho}/>
-
-      </View>
-
-    );
-  }
+        </View>
+    </View>
+  );
+}
 
 
 export default Search;
@@ -54,7 +52,6 @@ const styles=StyleSheet.create({
     backgroundColor: "white",
     width: 280,
     height: 40,
-    borderWidth: 0.3,
     borderRadius: 100,
     alignSelf: "center",
     marginTop: 40,
@@ -64,12 +61,8 @@ const styles=StyleSheet.create({
   },
 
   iconPesquisa:{
-    marginTop: 45,
+    marginTop:40,
     marginRight: 10,
-    color: "white"
+    color: "white",
   },
-  
-  espacinho:{
-    padding: 40,
-  }
 })

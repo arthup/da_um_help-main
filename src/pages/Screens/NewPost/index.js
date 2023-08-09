@@ -33,7 +33,7 @@ const NewPost = () => {
     contentType: 'image/jpeg',
   };
 
-  if (image ==! null){
+  if (image !== null){
   const getBlobFroUri = async (uri) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -107,7 +107,7 @@ const NewPost = () => {
   ); 
 } else{
     try {
-      const docRef = addDoc(collection(db, "posts"), {
+      const docRef = addDoc(collection(db, "users", user.uid, 'posts'), {
         userId:user.uid,
         post: value,
         postImage: null,
@@ -116,6 +116,7 @@ const NewPost = () => {
         comments: null
       });
       console.log("Document written with ID: ", docRef.id);
+      console.log(image);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -123,17 +124,20 @@ const NewPost = () => {
 };
 
   return (
+    
+
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      
       <SafeAreaView  style={styles.backColor}>
         <StatusBar backgroundColor="#4FB9FF" barStyle="ligth-content"/>
 
         <View>
           <Text style={styles.textHeader}>Crie sua Postagem</Text>
         </View>
+        
 
         <View style={styles.container}>
-        
+      
+          <View>
             <View style={styles.textAreaContainer}>
               <TextInput   
                 multiline
@@ -147,27 +151,35 @@ const NewPost = () => {
             </View>
 
             <View style={styles.buttonPickImage}>
+      
+
               <Text style={styles.textButton}>Adicione uma imagem:</Text>
                 <TouchableOpacity onPress={pickImage}>
                     <Ionicons name="md-images-outline" size={24} color="gray" />
                 </TouchableOpacity>
+                
             </View>
+          </View>
+          
 
             <View style={styles.containerImage}>
               {image && <Image source={{uri:image}} style={{width: '140%', height: '140%', borderRadius: 20}}/>} 
             </View>     
 
-            <View style={styles.buttonUpload}>
-              <TouchableOpacity onPress={submitData}  >
+            <View >
+              <TouchableOpacity onPress={submitData}  style={styles.buttonUpload}>
                 <Text style={styles.btnText}>Upload Image</Text> 
               </TouchableOpacity>
             </View>
            
           </View>
+         
         
     </SafeAreaView>
     
+    
    </TouchableWithoutFeedback>
+
   );
 }
 
@@ -191,9 +203,9 @@ const styles = StyleSheet.create({
   containerImage:{
     alignItems:'center',
     width:'50%',
-    height:'30%',
+    height:'20%',
     alignSelf:'center',
-    flex:1
+  
 
   },
   
@@ -231,7 +243,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
     marginBottom: 5,
-    marginRight: "40%"
+    marginRight: "40%",
+    paddingStart: "5%"
   },
 
   buttonPickImage: {
@@ -240,7 +253,6 @@ const styles = StyleSheet.create({
     height: '15%',
     width: '95%',
     flexDirection: "row",
-    marginTop: "-16%",
     marginBottom: 25,
   },
 

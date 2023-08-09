@@ -17,15 +17,15 @@ export const PostCard = ({item}) => {
     return (
         <Card>
           <UserInfo>
-            <UserImg source={item.userImg}/>
+            <UserImg source={{uri: item.userImg}}/>
             <UserInfoText>
-              <UserName>{item.userName}</UserName>
+              <UserName>{item.name}</UserName>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>
   
           <PostText>{item.post}</PostText>
-          {item.postImg !== 'none' ? <PostImage source={ item.postImg } /> : <Divider />}
+          {item.postImage !== null ? <PostImage source={{ uri: item.postImage} } /> : <Divider />}
           
   
           <InteractionWrapper>

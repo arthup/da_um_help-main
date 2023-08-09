@@ -7,7 +7,7 @@ import { storage, auth, db } from '../../../Services/firebaseConfig';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { collection, addDoc, updateDoc, doc, docRef, setDoc } from "firebase/firestore";
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import { useBackHandler } from '@react-native-community/hooks';
 
 
 
@@ -31,6 +31,11 @@ const Docments = () => {
     const user = auth.currentUser;
     const userUpdate = doc(db, "users", user.uid);
 
+    useBackHandler(() =>{
+        if(1 == 1){
+      return true
+        }
+      });
 
     const showMode = (currentMode) => {
         setShow(true);

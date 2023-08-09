@@ -5,6 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Button, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { Foundation } from '@expo/vector-icons';
 
 const Profile = () => {
 
@@ -54,36 +57,36 @@ const Profile = () => {
   return (
     <View style={styles.container}>
 
-        <TouchableOpacity style={styles.containerImageBackground}>
-          <Image source={require("../../../assets/azul.jpg")} style={styles.imageBackground}></Image>
-        </TouchableOpacity>
+      <TouchableOpacity>
+        <Image source={require("../../../assets/azul.jpg")} style={styles.imageBackground}></Image>
+      </TouchableOpacity>
 
       <View style={styles.containerProfile}>
         <Image source={require("../../../assets/perfil.jpg")} style={styles.imageProfile}></Image>
       </View>
 
+      
       <View style={styles.containerUserName}>
         <Text style={styles.userName}>Perfil Teste</Text>
         <TouchableOpacity onPress={()=>(navigation.navigate('EditProfile'))}>
-          <Image source={require("../../../assets/edita.png")} style={styles.icon}></Image>
+          <FontAwesome5 name="edit" size={20} color="black" style={styles.icon}/>
         </TouchableOpacity>
       </View>
-
+      
       <View style={styles.perfil}>
         <Text style={styles.bio}>@perfil_teste</Text>
       </View>
+      
 
       <View style={styles.profissao}>
-        <Image source={require("../../../assets/pincel.png")} style={styles.iconProfissao}></Image>
+        <Foundation name="paint-bucket" size={20} color="black"/>
         <Text style={styles.txtProfissao}>Pintor profissional</Text>
       </View>
 
-      <View style={styles.profissao}>
-        <Image source={require("../../../assets/localizacao.png")} style={styles.iconProfissao}></Image>
-        <Text style={styles.txtProfissao}>Localizacao</Text>
+      <View style={styles.informations}>
+        <MaterialCommunityIcons name="account-search-outline" size={20} color="black"/>
+        <Text style={styles.txtProfissao}>Mais Informações</Text>
       </View>
-
-      <View style={styles.espacinho}/>
 
       <Button onPress={LogOut} title='enviar'></Button>
 
@@ -96,121 +99,89 @@ const Profile = () => {
 export default Profile;
 
 const styles=StyleSheet.create({
+
   container:{
     flex: 1,
-    alignItems: 'center',
   },
 
-  containerImageBackground:{
-    alignItems: 'center',
+  imageBackground: {
     width: "100%",
     height: 200,
-    flex: 1,
-    borderRadius: 20,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25
   },
 
-  imageBackground:{
-    width: "100%",
-    height: 200,
-    borderRadius: 20,
-    marginTop: -12,
-    alignSelf: 'center',
-  },
-
-  containerProfile:{
+  containerProfile: {
     alignItems: "center",
+    marginTop: -65
   },
 
-  containerUserName:{
-    alignSelf: "center", 
-    alignItems: "center",
-    flexDirection: "row", 
-    justifyContent: "center",
-    marginTop: 80,
-    alignSelf: 'center',
-  },
-
-  icon:{
-    width: 20,
-    height: 20,
-    marginTop: 10,
-    marginLeft: 5,
-  },
-
-  imageProfile:{
-    width: 130, 
-    height: 130, 
-    borderRadius: 100, 
+  imageProfile: {
+    width: 130,
+    height: 130,
+    borderRadius: 100,
     borderWidth: 4,
-    borderColor: 'blue',
-    marginTop: -80,
-    alignSelf: 'center',
+    borderColor: "gray",
   },
 
-  userName:{
-    fontSize: 20, 
-    fontWeight: "bold", 
-    padding: 10,
-    alignSelf: 'center',
-    marginTop: -110,
+  containerUserName: {
+    alignItems: "center",
+    alignSelf: "center",
+    flexDirection: "row",
+    marginTop: 40
+  },
+
+  userName: {
+    fontWeight: "bold",
+    marginRight: 10,
+    fontSize: 20
+  },
+
+  perfil:{
+    alignItems: "center",
+    marginTop: 15
   },
 
   bio:{
-    fontSize: 15, 
-    fontWeight: "bold", 
     color: "gray",
-    alignSelf: 'center',
+    fontSize: 15,
+    fontWeight: "bold",
+    marginBottom: 15,
   },
 
-  estilizaFollow:{
-    marginTop: 15,
-    paddingVertical: 8,
+  profissao: {
+    alignSelf: "center",
+    alignItems: "center",
     flexDirection: "row",
-    alignSelf: 'center',
-  },
-
-  follow:{
-    flexDirection: "column",
-    alignItems: "center",
-    marginHorizontal: 22,
-  },
-
-  seguindo:{
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-
-  seguindoDois:{
-    fontSize: 15,
-  },
-
-  profissao:{
-    alignSelf: "center", 
-    alignItems: "center",
-    flexDirection: "row", 
-    justifyContent: "center", 
-    backgroundColor: "#fff", 
-    width: "90%", 
-    paddingBottom: 12, 
-    paddingTop: 12,
-    borderRadius: 10, 
+    paddingStart: "5%",
+    backgroundColor: "#fff",
+    width: "90%",
+    height: 40,
+    borderRadius: 10,
     shadowOpacity: 80, 
-    elevation: 15, 
-    marginTop: 20,
-    alignSelf: 'center',
+    elevation: 15,
+    marginTop: 10,
+    justifyContent: "center"
   },
 
-  txtProfissao:{
-    alignSelf: 'center',
+  txtProfissao: {
+    fontSize: 15,
+    marginLeft: 12,
   },
 
-  iconProfissao:{
-    width: 20,
-    height: 20,
-    marginRight: 10,
+  informations: {
+    alignSelf: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingStart: "5%",
+    backgroundColor: "#fff",
+    width: "90%",
+    height: 40,
+    borderRadius: 10,
+    shadowOpacity: 80, 
+    elevation: 15,
+    marginTop: 10,
+    justifyContent: "center",
+    marginBottom: 10
   },
-
-  espacinho:{
-    padding: 40,
-  }
 })

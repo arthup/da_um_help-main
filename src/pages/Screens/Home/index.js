@@ -1,55 +1,72 @@
-import React from 'react';
-import { FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, ScrollView, RefreshControl } from 'react-native';
 import { Container } from './FeedStyle.js';
 import { PostCard } from './PostCard.js';
-
-const Posts = [
-  {
-    id: '1',
-    userName: 'Jenny Doe',
-    userImg: require('../../../assets/faxineiro.jpg'),
-    postTime: '4 mins ago',
-    post:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../../../assets/faxineiro.jpg'),
-    likes: '14',
-    comments: '5',
-  },
-  {
-    id: '2',
-    userName: 'John Doe',
-    userImg: require('../../../assets/faxineiro.jpg'),
-    postTime: '2 hours ago',
-    post:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: 'none',
-    likes: '8',
-    comments: '0',
-  },
-  {
-    id: '3',
-    userName: 'Ken William',
-    userImg: require('../../../assets/faxineiro.jpg'),
-    postTime: '1 hours ago',
-    post:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../../../assets/faxineiro.jpg'),
-    likes: '1',
-    comments: '0',
-  }
-]
+import { collection, doc, getDocs } from "firebase/firestore";
+import { storage, auth, db } from '../../../Services/firebaseConfig';
+import { useBackHandler } from '@react-native-community/hooks';
 
 const Home = () => {
+  const [posts, setPosts]=useState('')
+  const [users, setUsers]=useState('')
+  const list = [];
+
+  useBackHandler(() =>{
+    if(1 == 1){
+  return true
+    }
+  });
  
+  const getPosts = async () => {
+    
+    try{
+
+  const querySnapshot = await getDocs(collection(db, 'users'));
+  querySnapshot.forEach((doc) => {
+    const { name } = doc.data();
+    list.push({
+ name
+    });
+    setPosts(list);
+    console.log(posts)
+  });
+
+  } catch(e){
+    console.log(e)}
+  }
+
+
+  useEffect(() => {
+    getPosts()   
+  }, []);
+
+
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+
   return (
     <Container>
+
+      
       <FlatList
-        data={Posts}
+        data={posts}
         renderItem={({item}) => <PostCard item={item}/>}
         keyExtractor={item=> item.id}
         showsVerticalScrollIndicator={false}
         style={{width: "105%"}}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
+      
     </Container>
   );
 }

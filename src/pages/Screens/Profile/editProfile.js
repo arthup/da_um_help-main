@@ -1,106 +1,102 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import {View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput} from "react-native";
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
 
 const EditProfile = () => {
 
     const navigation = useNavigation();
 
     return (
+      <ScrollView>
+        <View style={styles.container}>
 
-      <View style={styles.container}>
+            <View style={styles.containerHeader}>
+              <TouchableOpacity onPress={()=>(navigation.navigate('Perfil'))}>
+                <Feather name="arrow-left" size={24} color="white" style={styles.iconVoltar}/>
+              </TouchableOpacity>
 
-        <ScrollView>
+              <Text style={styles.message}>Editar Perfil</Text>
 
-          <View style={styles.containerHeader}>
-            <TouchableOpacity onPress={()=>(navigation.navigate('Perfil'))}>
-              <Image source={require("../../../assets/voltar.png")} style={styles.iconVoltar}></Image>
-            </TouchableOpacity>
-
-            <Text style={styles.message}>Editar Perfil</Text>
-
-            <TouchableOpacity>
-              <Image source={require("../../../assets/certo.png")} style={styles.iconConfirmar}></Image>
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <TouchableOpacity>
-              <Image source={require("../../../assets/azul.jpg")} style={styles.backgroundImage}></Image>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.perfil}>
-            <TouchableOpacity>
-              <Image source={require("../../../assets/perfil.jpg")} style={styles.imagePerfil}></Image>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.espaco}>
-            <View> 
-              <Text style={styles.informacaoUsuario}>Nome</Text>
+              <TouchableOpacity>
+                <Feather name="check" size={24} color="white" style={styles.iconConfirmar}/>
+              </TouchableOpacity>
+            </View>
+          
+          <View style={styles.containerInfo}>
+            <View>
+              <TouchableOpacity>
+                <Image source={require("../../../assets/azul.jpg")} style={styles.backgroundImage}></Image>
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.textInputPassword}>
-              <TextInput
-                placeholder='Arthur'
-                style={styles.inputName}
-              />
-            </View>
-          </View>
-
-          <View style={styles.espaco}>
-            <View> 
-              <Text style={styles.informacaoUsuario}>Nome do Usuario</Text>
+            <View style={styles.perfil}>
+              <TouchableOpacity>
+                <Image source={require("../../../assets/perfil.jpg")} style={styles.imagePerfil}></Image>
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.textInputPassword}>
-              <TextInput
-                placeholder='@arthur-silva'
-                style={styles.inputUsuario}
-              />
-            </View>
-          </View>
+            <View style={styles.informations}>
+              <View> 
+                <Text style={styles.informacaoUsuario}>Nome</Text>
+              </View>
 
-          <View style={styles.espaco}>
-            <View> 
-              <Text style={styles.informacaoUsuario}>Bio</Text>
-            </View>
-
-            <View style={styles.textInputPassword}>
-              <TextInput
-                placeholder='Programador senior'
-                style={styles.inputBio}
-              />
-            </View>
-          </View>
-
-          <View style={styles.espaco}>
-            <View> 
-              <Text style={styles.informacaoUsuario}>Senha</Text>
+              <View style={styles.textInputPassword}>
+                <TextInput
+                  placeholder='Arthur'
+                  style={styles.inputName}
+                />
+              </View>
             </View>
 
-            <View style={styles.textInputPassword}>
-              <TextInput
-                placeholder='1234'
-                style={styles.inputPassword}
-              />
-            </View>
-          </View>
+            <View style={styles.informations}>
+              <View> 
+                <Text style={styles.informacaoUsuario}>Nome do Usuario</Text>
+              </View>
 
-          <View>
+              <View style={styles.textInputPassword}>
+                <TextInput
+                  placeholder='@arthur-silva'
+                  style={styles.inputUsuario}
+                />
+              </View>
+            </View>
+
+            <View style={styles.informations}>
+              <View> 
+                <Text style={styles.informacaoUsuario}>Bio</Text>
+              </View>
+
+              <View style={styles.textInputPassword}>
+                <TextInput
+                  placeholder='Programador senior'
+                  style={styles.inputBio}
+                />
+              </View>
+            </View>
+
+            <View style={styles.informations}>
+              <View> 
+                <Text style={styles.informacaoUsuario}>Senha</Text>
+              </View>
+
+              <View style={styles.textInputPassword}>
+                <TextInput
+                  placeholder='1234'
+                  style={styles.inputPassword}
+                />
+              </View>
+            </View>
+
             <TouchableOpacity style={styles.profissao}>
-              <Image source={require("../../../assets/profissional.png")} style={styles.iconProfissao}></Image>
+              <FontAwesome5 name="user-cog" size={20} color="white" style={styles.iconProfissao}/>
               <Text style={styles.txtProfissao}>Mudar para conta profissional</Text>
             </TouchableOpacity>
+          
           </View>
 
-          <View style={styles.espacinho}/>
-
-        </ScrollView>
-
-      </View>
-
+        </View>
+      </ScrollView>
     );
   }
 
@@ -110,18 +106,28 @@ const styles=StyleSheet.create({
   container:{
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#4FB9FF',
   },
 
   containerHeader:{
     paddingStart: '5%',
-    backgroundColor: '#d6e9ff',
-    alignSelf: "center", 
     alignItems: "center",
+    justifyContent: "center",
     flexDirection: "row", 
+    width: "100%",
+    height: 80
+  },
+
+  containerInfo:{
+    backgroundColor: "white",
+    height: "100%",
+    width: "100%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
   },
 
   message:{
-    marginTop: '14%',
+    marginTop: 25,
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
@@ -129,27 +135,26 @@ const styles=StyleSheet.create({
   },
 
   iconVoltar:{
-    marginTop: 55,
-    marginRight: 20,
+    marginTop: 10,
+    marginRight: 15,
     height: 30,
-    width: 20,
-    
+    width: 30,
   },
 
   iconConfirmar:{
-    marginTop: 55,
+    marginTop: 10,
     marginRight: 20,
-    marginLeft: 160,
+    marginLeft: 120,
     height: 30,
     width: 20,
-    
   },
 
   backgroundImage:{
-    flex: 1,
-    width: 400, 
+    width: "100%", 
     height: 130,
     alignSelf: 'center',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
   },
 
   perfil:{
@@ -160,14 +165,14 @@ const styles=StyleSheet.create({
     width: 100, 
     height: 100, 
     borderRadius: 100, 
-    borderWidth: 4,
+    borderWidth: 3,
     borderColor: 'gray',
     marginTop: -50,
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
-  espaco:{
+  informations:{
     paddingBottom: 30,
     marginLeft: 10,
     marginRight: 10,
@@ -179,7 +184,6 @@ const styles=StyleSheet.create({
     color: "gray",
     paddingTop: 10,
     paddingBottom: 10,
-    
   },
 
   textInputPassword: {
@@ -235,14 +239,32 @@ const styles=StyleSheet.create({
     flexDirection: "row", 
     justifyContent: "center", 
     width: "90%", 
-    paddingBottom: 12, 
-    paddingTop: 12,
+    paddingBottom: 10, 
+    paddingTop: 10,
     borderRadius: 10, 
-    shadowOpacity: 80, 
-    elevation: 15, 
+    shadowOpacity: 200,
+    elevation: 5, 
     marginTop: 30,
     alignSelf: 'center',
     backgroundColor:"#d6e9ff",
+    marginBottom: 30,
+  },
+
+  logout:{
+    alignSelf: "center", 
+    alignItems: "center",
+    flexDirection: "row", 
+    justifyContent: "center", 
+    width: "90%", 
+    paddingBottom: 10, 
+    paddingTop: 10,
+    borderRadius: 10, 
+    shadowOpacity: 200, 
+    elevation: 5, 
+    marginTop: 10,
+    alignSelf: 'center',
+    backgroundColor:"#d6e9ff",
+    marginBottom: 40,
   },
 
   txtProfissao:{
@@ -252,13 +274,23 @@ const styles=StyleSheet.create({
     fontWeight: "bold"
   },
 
+  txtLogout:{
+    paddingTop: 4,
+    alignSelf: 'center',
+    color: "white",
+    fontWeight: "bold",
+  },
+
   iconProfissao:{
     width: 25,
     height: 25,
     marginRight: 10,
   },
 
-  espacinho:{
-    padding: 40,
-  }
+  iconLogout:{
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+
 })

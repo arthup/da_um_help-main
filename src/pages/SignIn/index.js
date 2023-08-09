@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from '../../Services/firebaseConfig';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { doc, setDoc } from "firebase/firestore";
-
+import { useBackHandler } from '@react-native-community/hooks';
 
 const SignIn = () => {
     const navigation = useNavigation('');
@@ -20,6 +20,11 @@ const SignIn = () => {
     const [passHide, setpassHide] = useState(true);
     const [passHide2, setpassHide2] = useState(true);
 
+    useBackHandler(() =>{
+        if(1 == 1){
+      return true
+        }
+      });
     
     const handleSignIn = () =>{
         createUserWithEmailAndPassword(auth, email, password)
@@ -227,9 +232,9 @@ const styles = StyleSheet.create({
     },
 
     buttonLoginText:{
-    color: "#A2ACC3",
-    fontSize: 15,
-    fontWeight: 'bold',
+        color: "#A2ACC3",
+        fontSize: 15,
+        fontWeight: 'bold',
     },
 
     textInputPassword: {

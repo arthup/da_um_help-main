@@ -35,7 +35,9 @@ export default function Routes(){
                     component={Home}
                     options={{ 
                         headerShown: true,
-                        tabBarLabel:'', 
+                        tabBarLabel:'',
+                        headerStyle: {backgroundColor:'#4FB9FF'},
+                        headerTintColor: 'white',
                         tabBarIcon:({size, color}) =>(
                             <Entypo name="home" size={size} color={color} />
                         )}}
