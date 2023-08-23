@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { Container } from './FeedStyle.js';
 import { PostCard } from './PostCard.js';
-import { collection, doc, getDocs } from "firebase/firestore";
-import { storage, auth, db } from '../../../Services/firebaseConfig';
+import { collection, getDocs, orderBy } from "firebase/firestore";
+import { db } from '../../../Services/firebaseConfig';
 import { useBackHandler } from '@react-native-community/hooks';
 
 const Home = () => {
@@ -13,63 +13,72 @@ const Home = () => {
 
   useBackHandler(() =>{
     if(1 == 1){
-  return true
+      return true
     }
   });
  
   const getPosts = async () => {
-    
     try{
+      const querySnapshot = await getDocs(collection(db, 'posts'), orderBy('postTime', 'asc'));
+      
+      querySnapshot.forEach((doc) => {
+        const { comments, likes, post, postImage, postTime, userId, name, userImg } = doc.data();
+        list.push({ 
+          name,
+          comments, 
+          likes, 
+          post, 
+          postImage, 
+          postTime, 
+          userId,
+          userImg,
+          id: doc.id
+        });
+        
+        setPosts(list);
+      });
 
-  const querySnapshot = await getDocs(collection(db, 'users'));
-  querySnapshot.forEach((doc) => {
-    const { name } = doc.data();
-    list.push({
- name
-    });
-    setPosts(list);
-    console.log(posts)
-  });
-
-  } catch(e){
-    console.log(e)}
+    } catch(e){
+        console.log(e)
+    }
   }
-
 
   useEffect(() => {
     getPosts()   
   }, []);
 
-
-
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
 
+  function renderItem({ item } ) {
+    return <PostCard item={item}/>
+  }
+
+
   return (
     <Container>
-
-      
       <FlatList
         data={posts}
-        renderItem={({item}) => <PostCard item={item}/>}
+        renderItem={renderItem}
         keyExtractor={item=> item.id}
+        initialNumToRender={3}
         showsVerticalScrollIndicator={false}
         style={{width: "105%"}}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        refreshing={refreshing} 
       />
-      
     </Container>
   );
 }
 
 export default Home;
-

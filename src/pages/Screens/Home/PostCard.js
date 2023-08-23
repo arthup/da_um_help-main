@@ -9,11 +9,15 @@ export const PostCard = ({item}) => {
 
   const pressLike =() => {
     if (like === false){
-    setLike(true)
+      setLike(true)
+    } else {
+      setLike(false)
+    }
+  }
+
+  if (item.name ===''){
+    undefined
   } else {
-    setLike(false)
-  }
-  }
     return (
         <Card>
           <UserInfo>
@@ -25,22 +29,21 @@ export const PostCard = ({item}) => {
           </UserInfo>
   
           <PostText>{item.post}</PostText>
-          {item.postImage !== null ? <PostImage source={{ uri: item.postImage} } /> : <Divider />}
+          {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
           
-  
           <InteractionWrapper>
-  
             <Interaction onPress={pressLike}>
-              <AntDesign  name={like===false ?'like2' : 'like1'} size={30} color='black'/>
+              <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={27} color='#242E4E'/>
               <InteractionText>Curtir</InteractionText>
             </Interaction>
   
             <Interaction >
-              <FontAwesome  name='comment' size={30} color='black'/>
+              <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
               <InteractionText>Comentarios</InteractionText>
             </Interaction>
-  
           </InteractionWrapper>
         </Card>
     );
-  }
+  }}
+
+  

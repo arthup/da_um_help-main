@@ -1,187 +1,269 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signOut, updateProfile } from "firebase/auth";
-import  { auth, storage } from '../../../Services/firebaseConfig';
+import  { auth, db } from '../../../Services/firebaseConfig';
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Button, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, SafeAreaView, Button, ListRenderItemInfo } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Foundation } from '@expo/vector-icons';
+import { PostCard } from '../Home/PostCard';
+import { Container2, Divider } from '../Home/FeedStyle.js';
 
 const Profile = () => {
-
   const user = auth.currentUser;
-  const [image, setImage] = useState(null);
-  const foto = user.photoURL;  
   const navigation = useNavigation();
-  const displayName = user.displayName;
-  const email = user.email;
+  const [userBackgroundImg, setUserBackgroundImg]=useState('');
+  const [userImg, setUserImg]=useState('');
+  const [name, setName]=useState('');
+  const [posts, setPosts]=useState('');
+  const listUserInfo = [];
+  const list = [];
 
   const LogOut = () => {
     signOut(auth).then(() => {
-      // Sign-out successful.
       console.log('deslogado')
       navigation.navigate('Welcome')
     }).catch((error) => {
-      // An error happened.
     })
   }
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: false,
-        base64:true,
-        aspect: [4,3],
-        quality: 1,
-        allowsMultipleSelection: true,
-    });
-    const source = result.assets[0].uri
-    setImage(source)
+  const getUserInfo = async () => {
+    
+    try{
+      const q = query(collection(db, "users"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
 
-  }; 
+      querySnapshot.forEach((doc) => {
+        const {userBackgroundImg, userImg, name}  = doc.data();
+        listUserInfo.push({ 
+          userBackgroundImg,
+          userImg,
+          name,
+          id: doc.id
+        });
 
-  const submitData = async () =>{
-    updateProfile(auth.currentUser, {
-      photoURL: image
-  }).then(() => {
-    // Profile updated!
-    // ...
-  }).catch((error) => {
-    // An error occurred
-    // ...
-  });
-}
+        setUserBackgroundImg(userBackgroundImg);
+        setUserImg(userImg);
+        setName(name)
+      });
+    } catch(e){
+      console.log(e)}
+  }
+
+  const getPosts = async () => {
+    
+    try{
+      const q = query(collection(db, "posts"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const {comments, likes, post, postImage, postTime, userId, name, userImg}  = doc.data();
+        list.push({ 
+          name,
+          comments, 
+          likes, 
+          post, 
+          postImage, 
+          postTime, 
+          userId,
+          userImg,
+          id: doc.id
+        });
+        
+        setPosts(list);
+      });
+    } catch(e){
+      console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    getUserInfo()
+    getPosts()
+ 
+  }, []);
+
+
+ const teste = () =>{ 
+  return(
+  <View style={{ backgroundColor:'#d0dde2', bottom:-90}}>
+    <Text>DA UM HELP!</Text>
+  </View>)
+ }
+  const ListHeader = () =>{
+    return(
+      <View style={styles.container}>
+        
+        <TouchableOpacity>
+          <Image source={{uri: userBackgroundImg ? userBackgroundImg : null}} style={styles.imageBackground}></Image>
+        </TouchableOpacity>
+        
+        <View style={styles.containerProfile}>
+          <Image source={{uri: userImg ? userImg : null}} style={styles.imageProfile}></Image>
+        </View>
+      
+        <View style={styles.containerUserName}>
+          <Text style={styles.userName}>{name}</Text>
+          <TouchableOpacity onPress={()=>(navigation.navigate('EditProfile'))}>
+            <FontAwesome5 name="edit" size={20} color="#242E4E" style={styles.icon}/>
+          </TouchableOpacity>
+        </View>
+      
+        <View style={styles.perfil}>
+          <Text style={styles.bio}>@perfil_teste</Text>
+        </View>
+        
+        <View style={styles.profissao}>
+          <Foundation name="paint-bucket" size={20} color="#242E4E"/>
+          <Text style={styles.txtProfissao}>Pintor profissional</Text>
+        </View>
+      
+        <View style={styles.informations}>
+          <MaterialCommunityIcons name="account-search-outline" size={20} color="#242E4E"/>
+          <Text style={styles.txtProfissao}>Mais Informações</Text>
+        </View>
+      
+        {/* <Button onPress={LogOut} title='enviar'></Button> */}
+        <View style={styles.containerPost}>
+          <Text style={styles.postagens}>Postagens</Text>
+        </View>
+        <View style={styles.space}></View>
+        </View>
+
+   
+    )
+  }
+
+  function renderItem({ item } ) {
+    return <Container2><PostCard item={item}/></Container2>
+  }
 
   return (
-    <View style={styles.container}>
-
-      <TouchableOpacity>
-        <Image source={require("../../../assets/azul.jpg")} style={styles.imageBackground}></Image>
-      </TouchableOpacity>
-
-      <View style={styles.containerProfile}>
-        <Image source={require("../../../assets/perfil.jpg")} style={styles.imageProfile}></Image>
-      </View>
-
-      
-      <View style={styles.containerUserName}>
-        <Text style={styles.userName}>Perfil Teste</Text>
-        <TouchableOpacity onPress={()=>(navigation.navigate('EditProfile'))}>
-          <FontAwesome5 name="edit" size={20} color="black" style={styles.icon}/>
-        </TouchableOpacity>
-      </View>
-      
-      <View style={styles.perfil}>
-        <Text style={styles.bio}>@perfil_teste</Text>
-      </View>
-      
-
-      <View style={styles.profissao}>
-        <Foundation name="paint-bucket" size={20} color="black"/>
-        <Text style={styles.txtProfissao}>Pintor profissional</Text>
-      </View>
-
-      <View style={styles.informations}>
-        <MaterialCommunityIcons name="account-search-outline" size={20} color="black"/>
-        <Text style={styles.txtProfissao}>Mais Informações</Text>
-      </View>
-
-      <Button onPress={LogOut} title='enviar'></Button>
-
+    <View>
+      <FlatList
+        data={posts}
+        renderItem={renderItem}
+        keyExtractor={item=> item.id}
+        showsVerticalScrollIndicator={false}
+        style={{width: "100%", height: '100%'}}
+        ListHeaderComponent={ListHeader}
+        ListFooterComponent={teste}
+      />
     </View>
-
-
   );
 }
 
 export default Profile;
 
 const styles=StyleSheet.create({
-
   container:{
-    flex: 1,
+    flex: 2,
+    backgroundColor: "#f8f8f8",
   },
 
-  imageBackground: {
-    width: "100%",
+  imageBackground:{
+    width: '100%',
     height: 200,
     borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25
+    borderBottomRightRadius: 25,
   },
 
-  containerProfile: {
-    alignItems: "center",
-    marginTop: -65
+  containerProfile:{
+    alignItems: 'center',
+    marginTop: -65,
   },
 
-  imageProfile: {
+  imageProfile:{
     width: 130,
     height: 130,
     borderRadius: 100,
     borderWidth: 4,
-    borderColor: "gray",
+    borderColor: '#A2ACC3',
   },
 
-  containerUserName: {
-    alignItems: "center",
-    alignSelf: "center",
-    flexDirection: "row",
-    marginTop: 40
+  containerUserName:{
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    marginTop: 40,
   },
 
-  userName: {
-    fontWeight: "bold",
+  userName:{
+    fontWeight: 'bold',
     marginRight: 10,
-    fontSize: 20
+    fontSize: 20,
   },
 
   perfil:{
-    alignItems: "center",
-    marginTop: 15
+    alignItems: 'center',
+    marginTop: 15,
   },
 
   bio:{
-    color: "gray",
+    color: '#A2ACC3',
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 15,
   },
 
-  profissao: {
-    alignSelf: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    paddingStart: "5%",
+  profissao:{
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingStart: '5%',
     backgroundColor: "#fff",
-    width: "90%",
+    width: '90%',
     height: 40,
     borderRadius: 10,
     shadowOpacity: 80, 
     elevation: 15,
     marginTop: 10,
-    justifyContent: "center"
+    justifyContent: 'center',
   },
 
-  txtProfissao: {
+  txtProfissao:{
     fontSize: 15,
     marginLeft: 12,
+
   },
 
-  informations: {
-    alignSelf: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    paddingStart: "5%",
+  containerPost:{
+    width: '100%',
+    marginTop: 10,
+    backgroundColor: '#2C8AD8',
+    borderRadius: 10,
+  },
+
+  postagens:{
+    fontSize: 24,
+    paddingStart: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: '2%',
+    marginTop: '2%',
+  },
+
+  space:{
+    height: 20,
+    width: '100%',
+    backgroundColor: '#d0dde2',
+  },
+
+  informations:{
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingStart: '5%',
     backgroundColor: "#fff",
-    width: "90%",
+    width: '90%',
     height: 40,
     borderRadius: 10,
     shadowOpacity: 80, 
     elevation: 15,
     marginTop: 10,
-    justifyContent: "center",
-    marginBottom: 10
+    justifyContent: 'center',
+    marginBottom: 10,
   },
-})
+});

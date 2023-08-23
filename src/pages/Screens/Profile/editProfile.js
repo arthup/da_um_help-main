@@ -5,23 +5,23 @@ import { Feather, FontAwesome5 } from '@expo/vector-icons';
 
 const EditProfile = () => {
 
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
     return (
       <ScrollView>
         <View style={styles.container}>
 
-            <View style={styles.containerHeader}>
-              <TouchableOpacity onPress={()=>(navigation.navigate('Perfil'))}>
-                <Feather name="arrow-left" size={24} color="white" style={styles.iconVoltar}/>
-              </TouchableOpacity>
+          <View style={styles.containerHeader}>
+            <TouchableOpacity onPress={()=>(navigation.navigate('Perfil'))}>
+              <Feather name="arrow-left" size={24} color="white" style={styles.iconVoltar}/>
+            </TouchableOpacity>
 
-              <Text style={styles.message}>Editar Perfil</Text>
+            <Text style={styles.message}>Editar Perfil</Text>
 
-              <TouchableOpacity>
-                <Feather name="check" size={24} color="white" style={styles.iconConfirmar}/>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity>
+              <Feather name="check" size={24} color="white" style={styles.iconConfirmar}/>
+            </TouchableOpacity>
+          </View>
           
           <View style={styles.containerInfo}>
             <View>
@@ -92,13 +92,12 @@ const EditProfile = () => {
               <FontAwesome5 name="user-cog" size={20} color="white" style={styles.iconProfissao}/>
               <Text style={styles.txtProfissao}>Mudar para conta profissional</Text>
             </TouchableOpacity>
-          
           </View>
 
         </View>
       </ScrollView>
     );
-  }
+}
 
 export default EditProfile;
 
@@ -106,22 +105,22 @@ const styles=StyleSheet.create({
   container:{
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#4FB9FF',
+    backgroundColor: "#4FB9FF",
   },
 
   containerHeader:{
     paddingStart: '5%',
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row", 
-    width: "100%",
-    height: 80
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row', 
+    width: '100%',
+    height: 80,
   },
 
   containerInfo:{
-    backgroundColor: "white",
-    height: "100%",
-    width: "100%",
+    backgroundColor: 'white',
+    height: '100%',
+    width: '100%',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -150,7 +149,7 @@ const styles=StyleSheet.create({
   },
 
   backgroundImage:{
-    width: "100%", 
+    width: '100%', 
     height: 130,
     alignSelf: 'center',
     borderTopLeftRadius: 25,
@@ -158,7 +157,7 @@ const styles=StyleSheet.create({
   },
 
   perfil:{
-    alignItems: "center",
+    alignItems: 'center',
   },
 
   imagePerfil:{
@@ -180,8 +179,8 @@ const styles=StyleSheet.create({
 
   informacaoUsuario:{
     fontSize: 15, 
-    fontWeight: "bold",
-    color: "gray",
+    fontWeight: 'bold',
+    color: 'gray',
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -190,7 +189,7 @@ const styles=StyleSheet.create({
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop:12
+    marginTop: 12,
   },
 
   inputName:{
@@ -200,7 +199,7 @@ const styles=StyleSheet.create({
     fontSize: 16,
     borderWidth: 0,
     position: 'absolute',
-    width: "100%",
+    width: '100%',
   },
 
   inputUsuario:{
@@ -210,7 +209,7 @@ const styles=StyleSheet.create({
     fontSize: 16,
     borderWidth: 0,
     position: 'absolute',
-    width: "100%",
+    width: '100%',
   },
 
   inputBio:{
@@ -220,7 +219,7 @@ const styles=StyleSheet.create({
     fontSize: 16,
     borderWidth: 0,
     position: 'absolute',
-    width: "100%",
+    width: '100%',
   },
 
   inputPassword:{
@@ -230,15 +229,15 @@ const styles=StyleSheet.create({
     fontSize: 16,
     borderWidth: 0,
     position: 'absolute',
-    width: "100%",
+    width: '100%',
   },
 
   profissao:{
-    alignSelf: "center", 
-    alignItems: "center",
-    flexDirection: "row", 
-    justifyContent: "center", 
-    width: "90%", 
+    alignSelf: 'center', 
+    alignItems: 'center',
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    width: '90%', 
     paddingBottom: 10, 
     paddingTop: 10,
     borderRadius: 10, 
@@ -251,11 +250,11 @@ const styles=StyleSheet.create({
   },
 
   logout:{
-    alignSelf: "center", 
-    alignItems: "center",
-    flexDirection: "row", 
-    justifyContent: "center", 
-    width: "90%", 
+    alignSelf: 'center', 
+    alignItems: 'center',
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    width: '90%', 
     paddingBottom: 10, 
     paddingTop: 10,
     borderRadius: 10, 
@@ -270,15 +269,15 @@ const styles=StyleSheet.create({
   txtProfissao:{
     paddingTop: 4,
     alignSelf: 'center',
-    color: "white",
-    fontWeight: "bold"
+    color: 'white',
+    fontWeight: 'bold',
   },
 
   txtLogout:{
     paddingTop: 4,
     alignSelf: 'center',
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
   },
 
   iconProfissao:{
@@ -292,5 +291,4 @@ const styles=StyleSheet.create({
     height: 25,
     marginRight: 10,
   },
-
-})
+});

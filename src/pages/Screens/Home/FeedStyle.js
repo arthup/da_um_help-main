@@ -1,10 +1,17 @@
-import {styled} from 'styled-components';
+import { styled } from 'styled-components';
 
 export const Container = styled.View`
-  flex: 1;
-  align-items: center;
-  background-color: #d0dde2;
-  padding: 20px;
+    flex: 1;
+    align-items: center;
+    background-color: #d0dde2;
+    padding: 20px;
+`;
+
+export const Container2 = styled.View`
+    flex: 1;
+    align-items: center;
+    background-color: #d0dde2;
+    padding: 0px 20px 0px 20px;
 `;
 
 export const Card = styled.View`
@@ -39,7 +46,7 @@ export const UserName = styled.Text`
 
 export const PostTime = styled.Text`
     font-size: 12px;
-    color: #666;
+    color: #A2ACC3;
 `;
 
 export const PostText = styled.Text`
@@ -55,7 +62,7 @@ export const PostImage = styled.Image`
 `;
 
 export const Divider = styled.View`
-    border-bottom-color: #dddddd;
+    border-bottom-color: #A2ACC3;
     border-bottom-width: 1px;
     width: 92%;
     align-self: center;
@@ -78,7 +85,7 @@ export const Interaction = styled.TouchableOpacity`
 export const InteractionText = styled.Text`
     font-size: 12px;
     font-weight: bold;
-    color: #333;
+    color: black;
     margin-top: 10px;
     margin-left: 5px;
 `;

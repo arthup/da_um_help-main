@@ -17,25 +17,32 @@
     "splash": {
       "image": "./assets/LO2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#619dfd"
+      "backgroundColor": "#2C8AD8"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.arthupreiprei.DaUmHelp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/LO2.png",
-        "backgroundColor": "#619dfd"
-        
-      }
+        "backgroundColor": "#2C8AD8"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.arthupreiprei.DaUmHelp"
     },
     "web": {
       "favicon": "./assets/LO2.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ecd20bf8-1068-40d2-8828-6d84715cc0e4"
+      }
     }
   }
-  }
-
-
+}

@@ -22,9 +22,9 @@ const SignIn = () => {
 
     useBackHandler(() =>{
         if(1 == 1){
-      return true
+            return true
         }
-      });
+    });
     
     const handleSignIn = () =>{
         createUserWithEmailAndPassword(auth, email, password)
@@ -32,38 +32,35 @@ const SignIn = () => {
             const user = userCredential.user;
             updateProfile(auth.currentUser, {
                 displayName: name
-            }
-         
-            ).then(() => {
+            }).then(() => {
                 console.log('usuario criado');
                 try {
                     const docRef =  {
-                      userId:user.uid,
-                      name: name,
-                      email: email,
-                      password: password,
-                      cpf: null,
-                      rg: null,
-                      dataNasc: null,
-                      telefone: null,
-                      cep: null,
-                      estado: null,
-                      cidade: null,
-                      bairro: null,
-                      numero: null,
-                      rua: null,
-                      complemento: null,
-                      userImg: null,
-                      userBackgorundImg: null,
+                        userId:user.uid,
+                        name: name,
+                        email: email,
+                        password: password,
+                        cpf: null,
+                        rg: null,
+                        dataNasc: null,
+                        telefone: null,
+                        cep: null,
+                        estado: null,
+                        cidade: null,
+                        bairro: null,
+                        numero: null,
+                        rua: null,
+                        complemento: null,
+                        userImg: null,
+                        userBackgorundImg: null,
                     };
 
                     setDoc(doc(db, "users", user.uid), docRef);
-
                     console.log("Document written with ID: ", docRef.id);
-                  } catch (e) {
+                } catch (e) {
                     console.error("Error adding document: ", e);
-                  }
-                  navigation.navigate('Documents')
+                }
+                    navigation.navigate('userInfo')
             }).catch((error) => {
             });
         })
@@ -74,93 +71,87 @@ const SignIn = () => {
         })
     };
 
-
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-            <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-                <Text style={styles.message}>Crie sua conta!</Text>
-            </Animatable.View>
+            <View style={styles.container}>
+                <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
+                    <Text style={styles.message}>Crie sua conta!</Text>
+                </Animatable.View>
 
-            <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+                <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+                    {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
+                        <TextInput
+                            placeholder='Nome Completo '
+                            style={styles.input}
+                            value={name}
+                            onChangeText={(text) => setName(text) && (error == false && name ==="")}
+                        />
                 
-                {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
-                <TextInput
-                    placeholder='Nome Completo '
-                    style={styles.input}
-                    value={name}
-                    onChangeText={(text) => setName(text) && (error == false && name ==="")}
-                />
-            
-                {error == true && email==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
-                <TextInput
-                    placeholder='Email'
-                    style={styles.input}
-                    value={email}
-                    onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
-                />
-             
+                    {error == true && email==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
+                        <TextInput
+                            placeholder='Email'
+                            style={styles.input}
+                            value={email}
+                            onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
+                        />
+                
 
-                {error == true && password==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
-                <View style={styles.textInputPassword}>
-                    <TextInput
-                        placeholder='Senha'
-                        style={styles.inputPassword}
-                        secureTextEntry={passHide}
-                        value={password}
-                        onChangeText={(text) => setPassword(text) && (error == false && password ==="")}
-                    />
+                    {error == true && password==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
+                        <View style={styles.textInputPassword}>
+                            <TextInput
+                                placeholder='Senha'
+                                style={styles.inputPassword}
+                                secureTextEntry={passHide}
+                                value={password}
+                                onChangeText={(text) => setPassword(text) && (error == false && password ==="")}
+                            />
+                            
+                            <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
+                                <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
+                            </TouchableOpacity> 
+                        </View>
+
+                        <View> 
+                            <Text>{}</Text>   
+                        </View>
+
+                    {error == true && password_confirm==="" || password !== password_confirm ? <Text style={styles.warningMessage}> Senhas Diferentes </Text> : <Text style={styles.warningMessage}/>}
+                        <View style={styles.textInputPassword}>
+                            <TextInput
+                                placeholder='Confirmar Senha'
+                                style={styles.inputPassword}
+                                value={password_confirm}
+                                secureTextEntry={passHide2}
+                                onChangeText={(text) => setPassword_confirm(text) && (error == false && password_confirm ==="" )}
+                            />
+
+                            <TouchableOpacity  onPress={() => setpassHide2(!passHide2)}>
+                                <FontAwesome5 name={passHide2 ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
+                            </TouchableOpacity> 
+                        </View>
+
+                        { name === "" || email === "" || password === "" || password_confirm === "" || password !== password_confirm
+                            ? 
+                                <TouchableOpacity 
+                                    style={styles.buttonRegister}
+                                    onPress={() => (setError(true))}
+                                >
+                                    <Text style={styles.buttonRegisterText}>Prosseguir</Text>
+                                </TouchableOpacity>
+                            : 
+                                <TouchableOpacity 
+                                    style={styles.buttonRegister}
+                                    onPress={handleSignIn} 
+                                >
+                                    <Text style={styles.buttonRegisterText}>Prosseguir</Text>
+                                </TouchableOpacity>
+                        }
                     
-                    <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
-                        <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
-                    </TouchableOpacity> 
-                </View>
-
-                <View> 
-                    <Text>{}</Text>   
-                </View>
-
-                {error == true && password_confirm==="" || password !== password_confirm ? <Text style={styles.warningMessage}> Senhas Diferentes </Text> : <Text style={styles.warningMessage}/>}
-                <View style={styles.textInputPassword}>
-                    <TextInput
-                        placeholder='Confirmar Senha'
-                        style={styles.inputPassword}
-                        value={password_confirm}
-                        secureTextEntry={passHide2}
-                        onChangeText={(text) => setPassword_confirm(text) && (error == false && password_confirm ==="" )}
-                    />
-
-                    <TouchableOpacity  onPress={() => setpassHide2(!passHide2)}>
-                        <FontAwesome5 name={passHide2 ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
-                    </TouchableOpacity> 
-                </View>
-
-                    { name === "" || email === "" || password === "" || password_confirm === "" || password !== password_confirm
-                    ? 
-                    <TouchableOpacity 
-                        style={styles.buttonRegister}
-                        onPress={() => (setError(true))}
-                    >
-                        <Text style={styles.buttonRegisterText}>Prosseguir</Text>
-                    </TouchableOpacity>
-                    : 
-                    <TouchableOpacity 
-                        style={styles.buttonRegister}
-                        onPress={handleSignIn} 
-                    >
-                        <Text style={styles.buttonRegisterText}>Prosseguir</Text>
-                    </TouchableOpacity>
-                    }
-                
-                    <TouchableOpacity 
-                        style={styles.buttonLogin}
-                        onPress={() => navigation.navigate('LogIn')}
-                    >
-                        <Text style={styles.buttonLoginText}>Já tenho uma conta</Text>
-                    </TouchableOpacity>
-                
-            </Animatable.View>
-        </View>
+                        <TouchableOpacity style={styles.buttonLogin} onPress={() => navigation.navigate('LogIn')}>
+                            <Text style={styles.buttonLoginText}>Já tenho uma conta</Text>
+                        </TouchableOpacity>
+                </Animatable.View>
+            </View>
         </TouchableWithoutFeedback>
     )
 };
@@ -169,8 +160,8 @@ export default SignIn;
  
 const styles = StyleSheet.create({
     container:{
-        flex:2,
-        backgroundColor:"#619dfd"
+        flex: 2,
+        backgroundColor: "#2C8AD8",
     },
 
     containerHeader:{
@@ -186,8 +177,8 @@ const styles = StyleSheet.create({
     },
 
     containerForm:{
-        backgroundColor:"#d6e9ff",
-        flex:2,
+        backgroundColor: "#d6e9ff",
+        flex: 2,
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         paddingStart: '5%',
@@ -202,21 +193,21 @@ const styles = StyleSheet.create({
     },
 
     warningMessage:{
-        color:"#f00a0a",
-        fontSize:12,
-        fontWeight:'bold',
+        color: "#f00a0a",
+        fontSize: 12,
+        fontWeight: 'bold',
 
     },
 
     buttonRegister:{
-        backgroundColor:"#619dfd",
+        backgroundColor: "#2C8AD8",
         width: '80%',
-        alignSelf:'center',
+        alignSelf: 'center',
         borderRadius: 50,
         paddingVertical: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        bottom:'-33%',
+        bottom: '-37%',
     },
 
     buttonRegisterText:{
@@ -228,7 +219,7 @@ const styles = StyleSheet.create({
     buttonLogin:{
         marginTop: 14,
         alignSelf: 'center',
-        bottom:'-33%'
+        bottom: '-37%',
     },
 
     buttonLoginText:{
@@ -241,8 +232,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop:12
-        
+        marginTop: 12,
      },
 
      inputPassword:{
@@ -252,6 +242,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderWidth: 0,
         position: 'absolute',
-        width: "100%",
+        width: '100%',
     },
 });
