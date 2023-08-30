@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Container } from './FeedStyle.js';
 import { PostCard } from './PostCard.js';
 import { collection, getDocs, orderBy } from "firebase/firestore";
 import { db } from '../../../Services/firebaseConfig';
 import { useBackHandler } from '@react-native-community/hooks';
+
 
 const Home = () => {
   const [posts, setPosts]=useState('')

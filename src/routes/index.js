@@ -2,11 +2,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from '../pages/SignIn';
 import Welcome from '../pages/Welcome';
 import LogIn from '../pages/LogIn';
-import EditProfile from '../pages/Screens/Profile/editProfile';''
+import EditProfile from '../pages/Screens/Profile/editProfile';
+import UserProfile from '../pages/Screens/Profile/userProfile';
 import Screens from '../pages/Screens';
 import React from 'react';
-import userImages from '../pages/SignIn/userImages'
-import userInfo from '../pages/SignIn/userInfo'
+import userImages from '../pages/SignIn/userImages';
+import userInfo from '../pages/SignIn/userInfo';
 
 const Stack = createNativeStackNavigator();
 export default function Routes(){
@@ -55,6 +56,14 @@ export default function Routes(){
                 component={userInfo}
                 options={{ headerShown: false}}
             />
+
+            <Stack.Screen
+                name="userProfile"
+                component={UserProfile}
+                options={{ headerShown: false}}
+            />
+
+      
             
         </Stack.Navigator>
     );

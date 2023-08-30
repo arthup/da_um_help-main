@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { AntDesign, FontAwesome } from '@expo/vector-icons'; 
 import { Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from './FeedStyle';
+import { TouchableOpacity } from 'react-native'; 
+import { useNavigation } from '@react-navigation/native';
+import { UserProfile } from '../Profile/userProfile';
 
 
 export const PostCard = ({item}) => {
-  
   const [like, setLike] = useState(false);
+  const navigation = useNavigation();
+  
 
   const pressLike =() => {
     if (like === false){
@@ -23,7 +27,7 @@ export const PostCard = ({item}) => {
           <UserInfo>
             <UserImg source={{uri: item.userImg}}/>
             <UserInfoText>
-              <UserName>{item.name}</UserName>
+              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{item.name}</UserName></TouchableOpacity>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>
@@ -45,5 +49,7 @@ export const PostCard = ({item}) => {
         </Card>
     );
   }}
+  
 
   
+

@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { storage, auth, db } from '../../../Services/firebaseConfig';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 import { Ionicons } from '@expo/vector-icons';
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, Timestamp } from "firebase/firestore"; 
 import moment from 'moment';
 
 const NewPost = () => {
@@ -95,7 +95,8 @@ const NewPost = () => {
                 postImage: downloadURL,
                 postTime: date,
                 likes: null,
-                comments: null
+                comments: null,
+                timeStamp: Timestamp()
               });
               console.log("Document written with ID: ", docRef.id);
             } catch (e) {
