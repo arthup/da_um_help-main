@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../pages/Screens/Home/index';
-import Message from '../pages/Screens/Message/index';
+import Message from '../pages/Screens/Message';
 import NewPost from '../pages/Screens/NewPost/index';
 import Profile from '../pages/Screens/Profile/index';
 import Search from '../pages/Screens/Search/index';
@@ -35,13 +35,14 @@ export default function Routes(){
         >
                 
             <Tab.Screen
-                name="Inicio"
+                name="Dá um Help!"
                 component={Home}
                 options={{ 
                     headerShown: true,
                     tabBarLabel:'',
                     headerStyle: {backgroundColor:'#2C8AD8'},
                     headerTintColor: 'white',
+        
                     
                     tabBarIcon:({size, color}) =>(
                         <Entypo name="home" size={size} color={color} />
