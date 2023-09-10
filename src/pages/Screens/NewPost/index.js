@@ -96,7 +96,7 @@ const NewPost = () => {
                 postTime: date,
                 likes: null,
                 comments: null,
-                timeStamp: Timestamp()
+                // timeStamp: Timestamp()
               });
               console.log("Document written with ID: ", docRef.id);
             } catch (e) {

@@ -20,7 +20,7 @@ import { addDoc } from "firebase/firestore";
   const [posts, setPosts]=useState('');
   const listUserInfo = [];
   const list = [];
-
+  const ID = user.uid + item.route.params.userId
   
   const submitRequest = () => {
     try{
@@ -29,8 +29,10 @@ import { addDoc } from "firebase/firestore";
       name: user.displayName,
       userImg: user.photoURL,
       requestId: item.route.params.userId,
+      ID: ID
     });
-    console.log("Document written with ID: ", docRef.id);  
+    console.log("Document written with ID: ", docRef);
+      
   } catch (e) {
     console.error("Error adding document: ", e);
   }}
@@ -86,7 +88,7 @@ import { addDoc } from "firebase/firestore";
   useEffect(() => {
     getUserInfo()
     getPosts()
-   
+    
     
   }, []);
 

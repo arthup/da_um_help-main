@@ -4,7 +4,7 @@ import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleShe
 import { Container } from './RequestStyle';
 import { useBackHandler } from '@react-native-community/hooks';
 import { RequestCard } from './RequestCard';
-import { collection, getDocs, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, where, query } from "firebase/firestore";
 import { db, auth} from '../../../Services/firebaseConfig';
 
 const Message = () =>{
@@ -21,8 +21,9 @@ const Message = () =>{
  
   const getRequests = async () => {
     try{
-      const querySnapshot = await getDocs(collection(db, 'request'), where ("requestId", '==', user.uid));
+      const q = query(collection(db, "request"), where ("requestId", '==', user.uid));
       
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         const { requestId, userId, name, userImg } = doc.data();
         list.push({ 
