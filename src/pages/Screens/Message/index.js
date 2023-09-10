@@ -1,34 +1,91 @@
-import React from 'react';
-import { View, Text, StyleSheet, StatusBar, SafeAreaView, Image, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react';
+// import { View, Text, StyleSheet, StatusBar, SafeAreaView, Image, TouchableOpacity } from 'react-native'
+import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Container } from './RequestStyle';
+import { useBackHandler } from '@react-native-community/hooks';
+import { RequestCard } from './RequestCard';
+import { collection, getDocs, orderBy, where } from "firebase/firestore";
+import { db, auth} from '../../../Services/firebaseConfig';
 
 const Message = () =>{
+  const [requests, setRequests]=useState('')
+  const [users, setUsers]=useState('')
+  const list = [];
+  const user = auth.currentUser
 
+  useBackHandler(() =>{
+    if(1 == 1){
+      return true
+    }
+  });
+ 
+  const getRequests = async () => {
+    try{
+      const querySnapshot = await getDocs(collection(db, 'request'), where ("requestId", '==', user.uid));
+      
+      querySnapshot.forEach((doc) => {
+        const { requestId, userId, name, userImg } = doc.data();
+        list.push({ 
+          name,
+          requestId, 
+          userId,
+          userImg,
+          id: doc.id
+        });
+        
+        
+        setRequests(list);
+      });
+
+    } catch(e){
+        console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    getRequests()
+    console.log(requests)
+  }, []);
+
+  function renderItem({ item } ) {
+    return <RequestCard item={item}/>
+  }
   return(
-  <SafeAreaView  style={styles.containerHead}>
-  <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
-  <View>
-      <Text style={styles.textHeader}>Mensagens</Text>
-  </View>
+//   <SafeAreaView  style={styles.containerHead}>
+//   <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
+//   <View>
+//       <Text style={styles.textHeader}>Mensagens</Text>
+//   </View>
 
-  <View style={styles.container}>
-    <TouchableOpacity style={styles.chat}>
-      <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
-      <View style={styles.containerText}>
-        <Text style={styles.nameUser}>Nome do Usuario</Text>
-        <Text style={styles.messages}>ultima mensagem enviada</Text>
-      </View>
-    </TouchableOpacity>
+//   <View style={styles.container}>
+//     <TouchableOpacity style={styles.chat}>
+//       <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
+//       <View style={styles.containerText}>
+//         <Text style={styles.nameUser}>Nome do Usuario</Text>
+//         <Text style={styles.messages}>ultima mensagem enviada</Text>
+//       </View>
+//     </TouchableOpacity>
 
-    <TouchableOpacity style={styles.chat}>
-      <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
-      <View style={styles.containerText}>
-        <Text style={styles.nameUser}>Nome do Usuario</Text>
-        <Text style={styles.messages}>ultima mensagem enviada</Text>
-      </View>
-    </TouchableOpacity>
+//     <TouchableOpacity style={styles.chat}>
+//       <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
+//       <View style={styles.containerText}>
+//         <Text style={styles.nameUser}>Nome do Usuario</Text>
+//         <Text style={styles.messages}>ultima mensagem enviada</Text>
+//       </View>
+//     </TouchableOpacity>
 
-  </View>
-</SafeAreaView>
+//   </View>
+// </SafeAreaView>
+<Container>
+<FlatList
+  data={requests}
+  renderItem={renderItem}
+  keyExtractor={item=> item.id}
+  initialNumToRender={3}
+  showsVerticalScrollIndicator={false}
+  style={{width: "105%"}}
+/>
+</Container>
 );
 }
 
