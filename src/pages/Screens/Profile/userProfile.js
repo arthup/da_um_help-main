@@ -6,7 +6,7 @@ import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, S
 import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard.js';
 import { Container2 } from '../Home/FeedStyle.js';
-import { addDoc } from "firebase/firestore"; 
+import { addDoc, setDoc, doc } from "firebase/firestore"; 
 
 
 
@@ -24,13 +24,14 @@ import { addDoc } from "firebase/firestore";
   
   const submitRequest = () => {
     try{
-    const docRef = addDoc(collection(db, "request"), {
+    const docRef = (collection(db, "request"), {
       userId:user.uid,
       name: user.displayName,
       userImg: user.photoURL,
       requestId: item.route.params.userId,
       ID: ID
     });
+    setDoc(doc(db, "request", ID), docRef);
     console.log("Document written with ID: ", docRef);
       
   } catch (e) {

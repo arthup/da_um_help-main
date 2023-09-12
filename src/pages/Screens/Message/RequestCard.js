@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AntDesign, FontAwesome } from '@expo/vector-icons'; 
 import { Card, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from '../Home/FeedStyle';
 import { TouchableOpacity, Text } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
 import { UserProfile } from '../Profile/userProfile';
-import { doc, deleteDoc, where, getDocs, collection } from "firebase/firestore";
+import { doc, deleteDoc, where, getDocs, collection, query } from "firebase/firestore";
 import { auth, db } from '../../../Services/firebaseConfig';
 
 
@@ -13,14 +13,38 @@ import { auth, db } from '../../../Services/firebaseConfig';
 export const RequestCard = ({item}) => {
   const navigation = useNavigation();
   const [accept, setAccept]=useState(false);
+  const [requests, setRequests]=useState("")
   const user = auth.currentUser;
-  console.log(user.uid)
-  console.log(item.ID)
-  console.log(item.userID)
+  const list = [];
+  const [doubleID, setDoubleID]=useState("")
+  
+  const getRequests = async () => {
+    try{
+      const q = query(collection(db, "request"), where("requestId", '==', user.uid));
+      
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const { requestId, userId, ID } = doc.data();
+        list.push({ 
+          ID,
+          requestId, 
+          userId,
+        });
+        
+        setRequests(list);
+        setDoubleID(ID)
+      });
 
-  const deleteDocs = async () => {
-    await deleteDoc(collection(db, "request", where((item.userId + user.uid), '==', (item.ID))))
+    } catch(e){
+        console.log(e)
+    }
   }
+
+
+  useEffect(() => {
+    getRequests()  
+    console.log(doubleID) 
+  }, []);
 
   if (item.name ===''){
     undefined
@@ -39,7 +63,8 @@ export const RequestCard = ({item}) => {
               SIM
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={deleteDocs}>
+          <TouchableOpacity onPress={()=> (deleteDoc(doc(db, "request", doubleID)))
+}>
             <Text>
               NAO
             </Text>
