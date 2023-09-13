@@ -50,12 +50,10 @@ const Home = () => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+   renderItem({item});
+   setRefreshing(false);
   }, []);
 
 

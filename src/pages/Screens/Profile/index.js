@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { signOut, updateProfile } from "firebase/auth";
-import  { auth, db } from '../../../Services/firebaseConfig';
+import { auth, db } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Button, ListRenderItemInfo, SectionList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { FontAwesome5 } from '@expo/vector-icons'; 
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { Foundation } from '@expo/vector-icons';
+import { FontAwesome5, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard';
 import { Container2, Divider } from '../Home/FeedStyle.js';
 
@@ -173,7 +171,7 @@ const styles=StyleSheet.create({
     width: '100%',
     height: 200,
     borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    borderBottomRightRadius: 25
   },
 
   containerProfile:{
