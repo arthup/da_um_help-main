@@ -96,6 +96,7 @@ const NewPost = () => {
                 postTime: date,
                 likes: null,
                 comments: null,
+                orderTime: Date.now()
                 // timeStamp: Timestamp()
               });
               console.log("Document written with ID: ", docRef.id);
@@ -115,7 +116,8 @@ const NewPost = () => {
           postImage: null,
           postTime: date,
           likes: null,
-          comments: null
+          comments: null,
+          orderTime: Date.now()
         });
         console.log("Document written with ID: ", docRef.id);
         console.log(image);

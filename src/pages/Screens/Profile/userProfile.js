@@ -29,7 +29,10 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       name: user.displayName,
       userImg: user.photoURL,
       requestId: item.route.params.userId,
-      ID: ID
+      ID: ID,
+      requestTime: Date.now(),
+      confirmId: null
+
     });
     setDoc(doc(db, "request", ID), docRef);
     console.log("Document written with ID: ", docRef);
