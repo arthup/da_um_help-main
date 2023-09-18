@@ -20,12 +20,12 @@ const Home = () => {
  
   const getPosts = async () => {
     try{
-      const q =  query(collection(db, 'posts'), orderBy('postTime', 'asc'));
+      const q =  query(collection(db, 'posts'), orderBy('orderTime', 'desc'));
       
       const querySnapshot = await getDocs(q)
       
       querySnapshot.forEach((doc) => {
-        const { comments, likes, post, postImage, postTime, userId, name, userImg } = doc.data();
+        const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime } = doc.data();
         list.push({ 
           name,
           comments, 
@@ -35,7 +35,9 @@ const Home = () => {
           postTime, 
           userId,
           userImg,
+          orderTime,
           id: doc.id
+
         });
         
         setPosts(list);
