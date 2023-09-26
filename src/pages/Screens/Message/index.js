@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import { View, Text, StyleSheet, StatusBar, SafeAreaView, Image, TouchableOpacity } from 'react-native'
-import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { Container } from './RequestStyle';
 import { useBackHandler } from '@react-native-community/hooks';
 import { RequestCard } from './RequestCard';
@@ -52,41 +52,26 @@ const Message = () =>{
     return <RequestCard item={item}/>
   }
   return(
-//   <SafeAreaView  style={styles.containerHead}>
-//   <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
-//   <View>
-//       <Text style={styles.textHeader}>Mensagens</Text>
-//   </View>
+  <SafeAreaView  style={styles.containerHead}>
+  <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
+    <View>
+        <Text style={styles.textHeader}>Notificações</Text>
+    </View>
 
-//   <View style={styles.container}>
-//     <TouchableOpacity style={styles.chat}>
-//       <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
-//       <View style={styles.containerText}>
-//         <Text style={styles.nameUser}>Nome do Usuario</Text>
-//         <Text style={styles.messages}>ultima mensagem enviada</Text>
-//       </View>
-//     </TouchableOpacity>
 
-//     <TouchableOpacity style={styles.chat}>
-//       <Image source={require("../../../assets/azul.jpg")} style={styles.imageProfile}></Image>
-//       <View style={styles.containerText}>
-//         <Text style={styles.nameUser}>Nome do Usuario</Text>
-//         <Text style={styles.messages}>ultima mensagem enviada</Text>
-//       </View>
-//     </TouchableOpacity>
+      <Container style={styles.container}>
+        <FlatList
+          data={requests}
+          renderItem={renderItem}
+          keyExtractor={item=> item.id}
+          initialNumToRender={3}
+          showsVerticalScrollIndicator={false}
+          style={{width: "105%"}}
+        />
+      </Container>
 
-//   </View>
-// </SafeAreaView>
-<Container>
-<FlatList
-  data={requests}
-  renderItem={renderItem}
-  keyExtractor={item=> item.id}
-  initialNumToRender={3}
-  showsVerticalScrollIndicator={false}
-  style={{width: "105%"}}
-/>
-</Container>
+  </SafeAreaView>
+
 );
 }
 
@@ -109,10 +94,11 @@ marginLeft: 20,
 
 container:{
 marginTop: 30,
-backgroundColor: "#f8f8f8",
+backgroundColor: "#d0dde2",
 width: '100%',
 height: '100%',
-borderRadius: 20,
+borderTopLeftRadius: 20,
+borderTopRightRadius: 20,
 },
 
 chat:{

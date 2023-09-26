@@ -25,7 +25,7 @@ const Home = () => {
       const querySnapshot = await getDocs(q)
       
       querySnapshot.forEach((doc) => {
-        const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime } = doc.data();
+        const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, telefone } = doc.data();
         list.push({ 
           name,
           comments, 
@@ -36,6 +36,7 @@ const Home = () => {
           userId,
           userImg,
           orderTime,
+          telefone,
           id: doc.id
 
         });

@@ -30,9 +30,8 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       userImg: user.photoURL,
       requestId: item.route.params.userId,
       ID: ID,
-      requestTime: Date.now(),
-      confirmId: null
-
+      telefoneContato: "12-34567-8910",
+      requestTime: Date.now()
     });
     setDoc(doc(db, "request", ID), docRef);
     console.log("Document written with ID: ", docRef);
@@ -70,7 +69,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {comments, likes, post, postImage, postTime, userId, name, userImg, id}  = doc.data();
+        const {comments, likes, post, postImage, postTime, userId, name, userImg, id, telefone}  = doc.data();
         list.push({ 
           name,
           comments, 
@@ -80,6 +79,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
           postTime, 
           userId,
           userImg,
+          telefone,
           id: doc.id
         });
         setPosts(list);

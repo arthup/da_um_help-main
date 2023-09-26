@@ -89,3 +89,13 @@ export const InteractionText = styled.Text`
     margin-top: 10px;
     margin-left: 5px;
 `;
+
+export const Check = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+`;
+
+export const Close = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+`;

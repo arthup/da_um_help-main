@@ -59,7 +59,7 @@ const Profile = () => {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {comments, likes, post, postImage, postTime, userId, name, userImg, timeStamp}  = doc.data();
+        const {comments, likes, post, postImage, postTime, userId, name, userImg, timeStamp, telefone}  = doc.data();
         list.push({ 
           name,
           comments, 
@@ -70,6 +70,7 @@ const Profile = () => {
           userId,
           userImg,
           timeStamp,
+          telefone,
           id: doc.id
         });
         console.log(doc.id)
