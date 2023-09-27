@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, RefreshControl, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Container } from './FeedStyle.js';
 import { PostCard } from './PostCard.js';
-import { collection, getDocs, orderBy } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from '../../../Services/firebaseConfig';
 import { useBackHandler } from '@react-native-community/hooks';
 
@@ -20,10 +20,12 @@ const Home = () => {
  
   const getPosts = async () => {
     try{
-      const querySnapshot = await getDocs(collection(db, 'posts'), orderBy('postTime', 'asc'));
+      const q =  query(collection(db, 'posts'), orderBy('orderTime', 'desc'));
+      
+      const querySnapshot = await getDocs(q)
       
       querySnapshot.forEach((doc) => {
-        const { comments, likes, post, postImage, postTime, userId, name, userImg } = doc.data();
+        const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, telefone } = doc.data();
         list.push({ 
           name,
           comments, 
@@ -33,7 +35,10 @@ const Home = () => {
           postTime, 
           userId,
           userImg,
+          orderTime,
+          telefone,
           id: doc.id
+
         });
         
         setPosts(list);

@@ -42,7 +42,7 @@ export const PostCard = ({item}) => {
             </Interaction>
   
             <Interaction >
-              <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
+              <FontAwesome style={{bottom: -3}} name='comments' size={27} color='#242E4E'/>
               <InteractionText>Comentarios</InteractionText>
             </Interaction>
           </InteractionWrapper>
