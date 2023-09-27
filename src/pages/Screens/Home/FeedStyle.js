@@ -21,6 +21,13 @@ export const Card = styled.View`
     border-radius: 10px;
 `;
 
+export const Card2 = styled.View`
+    background-color: #87CEEB;
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+`;
+
 export const UserInfo = styled.View`
     flex-direction: row;
     justify-content: flex-start;

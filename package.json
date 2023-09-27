@@ -53,6 +53,7 @@
     "react-native-mask-input": "^1.2.3",
     "react-native-reanimated": "~2.14.4",
     "react-native-screens": "^3.20.0",
+    "react-native-select-dropdown": "^3.4.0",
     "react-native-svg": "13.4.0",
     "react-native-textarea": "^1.0.4",
     "react-native-web": "~0.18.11",
