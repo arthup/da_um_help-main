@@ -38,6 +38,7 @@ const SignIn = () => {
                     const docRef =  {
                         userId:user.uid,
                         name: name,
+                        nameSearch: name.toUpperCase(),
                         email: email,
                         password: password,
                         cpf: null,
@@ -52,7 +53,7 @@ const SignIn = () => {
                         rua: null,
                         complemento: null,
                         userImg: null,
-                        userBackgorundImg: null,
+                
                     };
 
                     setDoc(doc(db, "users", user.uid), docRef);
@@ -81,7 +82,7 @@ const SignIn = () => {
                 <Animatable.View animation="fadeInUp" style={styles.containerForm}>
                     {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                         <TextInput
-                            placeholder='Nome Completo '
+                            placeholder='Nome Completo'
                             style={styles.input}
                             value={name}
                             onChangeText={(text) => setName(text) && (error == false && name ==="")}

@@ -10,6 +10,10 @@ import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
+
+const icone = () =>{
+    return  <Entypo name="home" size={20} color='red' />
+}
 export default function Routes(){
 
     return(
@@ -35,15 +39,17 @@ export default function Routes(){
         >
                 
             <Tab.Screen
-                name="Dá um Help!"
+                name="Dá um Help!" 
                 component={Home}
+                
                 options={{ 
                     headerShown: true,
+                    headerRight:icone,
                     tabBarLabel:'',
                     headerStyle: {backgroundColor:'#2C8AD8'},
                     headerTintColor: 'white',
-        
                     
+                
                     tabBarIcon:({size, color}) =>(
                         <Entypo name="home" size={size} color={color} />
                     )

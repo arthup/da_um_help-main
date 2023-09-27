@@ -20,12 +20,20 @@ const Home = () => {
  
   const getPosts = async () => {
     try{
+<<<<<<< HEAD
+      const q = query(collection(db, 'posts'), orderBy('orderTime', 'desc'))
+      const querySnapshot = await getDocs(q);
+      
+      querySnapshot.forEach((doc) => {
+        const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
+=======
       const q =  query(collection(db, 'posts'), orderBy('orderTime', 'desc'));
       
       const querySnapshot = await getDocs(q)
       
       querySnapshot.forEach((doc) => {
         const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, telefone } = doc.data();
+>>>>>>> 2f8b0b51efcc4634a74abaa5eb98452f6c77fa1e
         list.push({ 
           name,
           comments, 
@@ -36,7 +44,11 @@ const Home = () => {
           userId,
           userImg,
           orderTime,
+<<<<<<< HEAD
+          postType,
+=======
           telefone,
+>>>>>>> 2f8b0b51efcc4634a74abaa5eb98452f6c77fa1e
           id: doc.id
 
         });
@@ -55,12 +67,10 @@ const Home = () => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+   renderItem({item});
+   setRefreshing(false);
   }, []);
 
 
