@@ -137,14 +137,20 @@ const NewPost = () => {
                 postTime: date,
                 likes: null,
                 comments: null,
+<<<<<<< HEAD
                 postType: 'Cliente',
                 orderTime: Date.now()
+=======
+                orderTime: Date.now()
+                // timeStamp: Timestamp()
+>>>>>>> 2f8b0b51efcc4634a74abaa5eb98452f6c77fa1e
               });
               console.log("Document written with ID: ", docRef.id);
               console.log(image);
             } catch (e) {
               console.error("Error adding document: ", e);
             }
+<<<<<<< HEAD
           }
         }}else if(avaliacao===true){
                 if (image !== null){
@@ -346,6 +352,28 @@ const NewPost = () => {
           }
 
         
+=======
+          });
+        }
+      ); 
+    } else {
+      try {
+        const docRef = addDoc(collection(db, "posts"), {
+          userId:user.uid,
+          name: user.displayName,
+          userImg: user.photoURL,
+          post: value,
+          postImage: null,
+          postTime: date,
+          likes: null,
+          comments: null,
+          orderTime: Date.now()
+        });
+        console.log("Document written with ID: ", docRef.id);
+        console.log(image);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+>>>>>>> 2f8b0b51efcc4634a74abaa5eb98452f6c77fa1e
       }
     };
 

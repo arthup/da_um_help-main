@@ -6,6 +6,8 @@ import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, S
 import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard.js';
 import { Container2 } from '../Home/FeedStyle.js';
+import { addDoc, setDoc, doc } from "firebase/firestore"; 
+
 
 
  export default function UserProfile(item){
@@ -18,7 +20,25 @@ import { Container2 } from '../Home/FeedStyle.js';
   const [posts, setPosts]=useState('');
   const listUserInfo = [];
   const list = [];
-
+  const ID = user.uid + item.route.params.userId
+  
+  const submitRequest = () => {
+    try{
+    const docRef = (collection(db, "request"), {
+      userId:user.uid,
+      name: user.displayName,
+      userImg: user.photoURL,
+      requestId: item.route.params.userId,
+      ID: ID,
+      telefoneContato: "12-34567-8910",
+      requestTime: Date.now()
+    });
+    setDoc(doc(db, "request", ID), docRef);
+    console.log("Document written with ID: ", docRef);
+      
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }}
   const getUserInfo = async () => {
     
     try{
@@ -31,7 +51,7 @@ import { Container2 } from '../Home/FeedStyle.js';
           userBackgroundImg,
           userImg,
           name,
-          id: doc.id
+          id: doc.id,
         });
 
         setUserBackgroundImg(userBackgroundImg);
@@ -49,7 +69,7 @@ import { Container2 } from '../Home/FeedStyle.js';
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {comments, likes, post, postImage, postTime, userId, name, userImg, id}  = doc.data();
+        const {comments, likes, post, postImage, postTime, userId, name, userImg, id, telefone}  = doc.data();
         list.push({ 
           name,
           comments, 
@@ -59,6 +79,7 @@ import { Container2 } from '../Home/FeedStyle.js';
           postTime, 
           userId,
           userImg,
+          telefone,
           id: doc.id
         });
         setPosts(list);
@@ -71,7 +92,7 @@ import { Container2 } from '../Home/FeedStyle.js';
   useEffect(() => {
     getUserInfo()
     getPosts()
-   
+    
     
   }, []);
 
@@ -114,7 +135,7 @@ import { Container2 } from '../Home/FeedStyle.js';
         
         <View style={styles.profissao}>
           <Foundation name="paint-bucket" size={20} color="#242E4E"/>
-          <Text style={styles.txtProfissao}>Pintor profissional</Text>
+          <Text onPress={submitRequest} style={styles.txtProfissao}>Contatar</Text>
         </View>
       
         <View style={styles.informations}>
