@@ -37,6 +37,7 @@ export const UserInfoText = styled.View`
     flex-durection: column;
     justify-content: center;
     margin-left: 10px;
+    width:80%
 `;
 
 export const UserName = styled.Text`

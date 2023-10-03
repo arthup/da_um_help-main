@@ -25,12 +25,13 @@ const Message = () =>{
       
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        const { requestId, userId, name, userImg } = doc.data();
+        const { requestId, userId, name, userImg, telefoneContato } = doc.data();
         list.push({ 
           name,
           requestId, 
           userId,
           userImg,
+          telefoneContato,
           id: doc.id
         });
         

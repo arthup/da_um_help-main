@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from 'react-native';
-import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'; 
+import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal } from 'react-native';
+import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation,MaterialIcons } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard.js';
 import { Container2 } from '../Home/FeedStyle.js';
 import { addDoc, setDoc, doc } from "firebase/firestore"; 
@@ -21,7 +21,9 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   const listUserInfo = [];
   const list = [];
   const ID = user.uid + item.route.params.userId
-  
+  const [modalActive, setModalActive]=useState('')
+
+
   const submitRequest = () => {
     try{
     const docRef = (collection(db, "request"), {
@@ -30,7 +32,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       userImg: user.photoURL,
       requestId: item.route.params.userId,
       ID: ID,
-      telefoneContato: "12-34567-8910",
+      telefoneContato: "12-232322323",
       requestTime: Date.now()
     });
     setDoc(doc(db, "request", ID), docRef);
@@ -93,7 +95,6 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
     getUserInfo()
     getPosts()
     
-    
   }, []);
 
 
@@ -132,11 +133,39 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
         <View style={styles.perfil}>
           <Text style={styles.bio}>@perfil_teste</Text>
         </View>
-        
+        <Modal
+        visible={modalActive}
+        transparent={true}
+        animationType='fade'
+        onRequestClose={() => setModalActive(false)}
+        >
+          <View style={styles.outerView}>
+            <View style={styles.modalView}>
+            <Text style={{fontSize: 35, fontWeight:"bold", marginBottom:18}}>Contatar {name}</Text>
+              <Text style={{fontSize: 15}}>Ao clicar em confirmar você concorda em compartilhar seu telefone com <Text style={{fontSize: 15, fontWeight:"bold"}}>{name}</Text>.</Text>
+              <TouchableOpacity onPress={() => setModalActive(false)} onPressIn={submitRequest}>
+                <View style={styles.confirmContact}>
+                  <Text style={styles.txtConfirmContact}>
+                    Confirmar
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalActive(false)}>
+                <View style={styles.cancelContact}>
+                  <Text style={styles.txtConfirmContact}>
+                    Recusar
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <TouchableOpacity  onPress={() => setModalActive(true)}>
         <View style={styles.profissao}>
-          <Foundation name="paint-bucket" size={20} color="#242E4E"/>
-          <Text onPress={submitRequest} style={styles.txtProfissao}>Contatar</Text>
+          <MaterialIcons name="connect-without-contact" size={30} color="#242E4E"/>
+          <Text style={styles.txtProfissao}>Contatar</Text>
         </View>
+        </TouchableOpacity>
       
         <View style={styles.informations}>
           <MaterialCommunityIcons name="account-search-outline" size={20} color="#242E4E"/>
@@ -234,25 +263,10 @@ const styles=StyleSheet.create({
     marginBottom: 15,
   },
 
-  profissao:{
-    alignSelf: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingStart: '5%',
-    backgroundColor: "#fff",
-    width: '90%',
-    height: 40,
-    borderRadius: 10,
-    shadowOpacity: 80, 
-    elevation: 15,
-    marginTop: 10,
-    justifyContent: 'center',
-  },
-
   txtProfissao:{
     fontSize: 15,
-    marginLeft: 12,
-
+    marginLeft: 6,
+    
   },
 
   containerPost:{
@@ -293,5 +307,64 @@ const styles=StyleSheet.create({
     marginTop: 10,
     justifyContent: 'center',
     marginBottom: 10,
+  },
+
+  outerView:{
+    flex:1,
+    justifyContent: "center",
+    alignItems:"center",
+    backgroundColor:'rgba(0,0,0,0.2)'
+  },
+
+  modalView:{
+    backgroundColor:"white",
+    borderRadius:10,
+    padding:35,
+    width:350,
+    alignItems: "center"
+  },
+
+  profissao:{
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingStart: '5%',
+    backgroundColor: "#fff",
+    width: '90%',
+    height: 40,
+    borderRadius: 10,
+    shadowOpacity: 80, 
+    elevation: 15,
+    marginTop: 10,
+    justifyContent: 'center',
+  },
+
+  confirmContact:{
+   backgroundColor:"green",
+   marginTop: 35,
+   margin:20,
+   width:200,
+   height:40,
+   alignItems: "center",
+   justifyContent:"center",
+   borderRadius: 10
+  },
+
+  cancelContact:{
+    backgroundColor:"red",
+    margin:20,
+    marginTop: -10,
+    width:200,
+    height:40,
+    alignItems: "center",
+    justifyContent:"center",
+    borderRadius: 10
+   },
+
+  txtConfirmContact:{
+    color:"white",
+    fontSize: 15,
+    marginLeft: 6,
+    
   },
 });
