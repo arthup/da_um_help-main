@@ -17,6 +17,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   const [userBackgroundImg, setUserBackgroundImg]=useState('');
   const [userImg, setUserImg]=useState('');
   const [name, setName]=useState('');
+  const [telefoneUser, setTelefoneUser]=useState('');
   const [posts, setPosts]=useState('');
   const listUserInfo = [];
   const list = [];
@@ -24,15 +25,28 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   const [modalActive, setModalActive]=useState('')
 
 
-  const submitRequest = () => {
+  const submitRequest = async () => {
     try{
+        const q = query(collection(db, "users"), where("userId", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+  
+        querySnapshot.forEach((doc) => {
+          const {telefone, id}  = doc.data();
+          listUserInfo.push({ 
+            telefone,
+            id: doc.id,
+          });
+          setTelefoneUser(telefone);
+          console.log(telefone)
+    
+        });   
     const docRef = (collection(db, "request"), {
       userId:user.uid,
       name: user.displayName,
       userImg: user.photoURL,
       requestId: item.route.params.userId,
       ID: ID,
-      telefoneContato: "12-232322323",
+      telefoneContato: telefoneUser,
       requestTime: Date.now()
     });
     setDoc(doc(db, "request", ID), docRef);
