@@ -25,13 +25,14 @@ const Message = () =>{
       
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        const { requestId, userId, name, userImg, telefoneContato } = doc.data();
+        const { requestId, userId, name, userImg, telefoneContato, requestAccepted } = doc.data();
         list.push({ 
           name,
           requestId, 
           userId,
           userImg,
           telefoneContato,
+          requestAccepted,
           id: doc.id
         });
         
@@ -44,9 +45,34 @@ const Message = () =>{
     }
   }
 
+  const getRequests2 = async () => {
+    try{
+      const q = query(collection(db, "request"), where ("userId", '==', user.uid));
+      
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const { requestId, userId, name, userImg, telefoneContato, requestAccepted } = doc.data();
+        list.push({ 
+          name,
+          requestId, 
+          userId,
+          userImg,
+          telefoneContato,
+          requestAccepted,
+          id: doc.id
+        });
+        console.log(telefoneContato)
+        setRequests(list);
+      });
+
+    } catch(e){
+        console.log(e)
+    }
+  }
+
   useEffect(() => {
     getRequests()
-    console.log(requests)
+    getRequests2()
   }, []);
 
   function renderItem({ item } ) {

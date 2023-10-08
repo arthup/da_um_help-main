@@ -46,11 +46,15 @@ export const RequestCard = ({item}) => {
 
   useEffect(() => {
     getRequests()  
+    console.log(item.requestAccepted)
+    console.log(item.telefoneContato)
+    console.log(telefone)
   }, []);
-
+ 
   if (item.name ===''){
     undefined
-  } else {
+  } else if(item.userId !== user.uid){
+    
     return (
         <Card>
           <UserInfo>
@@ -87,7 +91,38 @@ export const RequestCard = ({item}) => {
 
         </Card>
     );
-  }}
+  }else if(item.requestAccepted === false){
+    
+      return (
+        <Card>
+          <UserInfo>
+            <UserImg source={{uri: item.userImg}}/>
+            
+            <UserInfoText >
+            <View style={{alignItems:"center",alignContent:"center",width:"100%",flexDirection: "row", position:"relative"}}>
+
+              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item))} >
+                <UserName>{item.name}</UserName>
+              </TouchableOpacity>
+            <TouchableOpacity onPress={() => (setAccept(true))} style={{marginLeft:"70%",position:"absolute"}} >
+                <AntDesign name='checksquare' size={40} color='green'/>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={()=> (deleteDoc(doc(db, "request", doubleID)))}  style={{marginLeft:"85.5%",position:"absolute"}}  >
+                <AntDesign name="closesquare" size={40} color="red" />
+              </TouchableOpacity>
+              </View>
+            </UserInfoText>
+           
+          </UserInfo>
+          <PostText style={{ fontWeight: "bold", fontSize: 15}}> TESTE TESTE TESTE 123456</PostText>
+
+
+        </Card>
+    );
+    }
+
+  }
 
   
 

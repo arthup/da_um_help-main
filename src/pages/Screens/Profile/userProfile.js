@@ -23,6 +23,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   const list = [];
   const ID = user.uid + item.route.params.userId
   const [modalActive, setModalActive]=useState('')
+  const [requestAccepted, setRequestAccepted]=useState(false);
 
 
   const submitRequest = async () => {
@@ -31,15 +32,19 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
         const querySnapshot = await getDocs(q);
   
         querySnapshot.forEach((doc) => {
-          const {telefone, id}  = doc.data();
+          const {telefone}  = doc.data();
           listUserInfo.push({ 
             telefone,
             id: doc.id,
           });
-          setTelefoneUser(telefone);
+          setTelefoneUser(listUserInfo);
           console.log(telefone)
-    
-        });   
+          console.log(telefoneUser)
+        }); 
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+      try{  
     const docRef = (collection(db, "request"), {
       userId:user.uid,
       name: user.displayName,
@@ -47,7 +52,8 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       requestId: item.route.params.userId,
       ID: ID,
       telefoneContato: telefoneUser,
-      requestTime: Date.now()
+      requestTime: Date.now(),
+      requestAccepted: requestAccepted
     });
     setDoc(doc(db, "request", ID), docRef);
     console.log("Document written with ID: ", docRef);
