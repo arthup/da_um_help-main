@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { auth, db } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
@@ -6,7 +6,7 @@ import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, S
 import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation,MaterialIcons } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard.js';
 import { Container2 } from '../Home/FeedStyle.js';
-import { addDoc, setDoc, doc } from "firebase/firestore"; 
+import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore"; 
 
 
 
@@ -25,25 +25,23 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   const [modalActive, setModalActive]=useState('')
   const [requestAccepted, setRequestAccepted]=useState(false);
 
-
-  const submitRequest = async () => {
+  const getTelefone = async () => {
     try{
         const q = query(collection(db, "users"), where("userId", "==", user.uid));
         const querySnapshot = await getDocs(q);
   
         querySnapshot.forEach((doc) => {
           const {telefone}  = doc.data();
-          listUserInfo.push({ 
+          ({ 
             telefone,
-            id: doc.id,
           });
-          setTelefoneUser(listUserInfo);
-          console.log(telefone)
-          console.log(telefoneUser)
+          setTelefoneUser(telefone);
         }); 
       } catch (e) {
         console.error("Error adding document: ", e);
-      }
+      }}
+  const submitRequest = async () => {
+
       try{  
     const docRef = (collection(db, "request"), {
       userId:user.uid,
@@ -60,7 +58,9 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
       
   } catch (e) {
     console.error("Error adding document: ", e);
-  }}
+  }
+  setModalActive(false)
+}
   const getUserInfo = async () => {
     
     try{
@@ -114,7 +114,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
   useEffect(() => {
     getUserInfo()
     getPosts()
-    
+    getTelefone()
   }, []);
 
 
@@ -163,7 +163,7 @@ import { addDoc, setDoc, doc } from "firebase/firestore";
             <View style={styles.modalView}>
             <Text style={{fontSize: 35, fontWeight:"bold", marginBottom:18}}>Contatar {name}</Text>
               <Text style={{fontSize: 15}}>Ao clicar em confirmar você concorda em compartilhar seu telefone com <Text style={{fontSize: 15, fontWeight:"bold"}}>{name}</Text>.</Text>
-              <TouchableOpacity onPress={() => setModalActive(false)} onPressIn={submitRequest}>
+              <TouchableOpacity onPress={submitRequest}>
                 <View style={styles.confirmContact}>
                   <Text style={styles.txtConfirmContact}>
                     Confirmar
