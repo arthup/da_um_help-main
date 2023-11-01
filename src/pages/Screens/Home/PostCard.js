@@ -1,15 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { AntDesign, FontAwesome } from '@expo/vector-icons'; 
-import { Card, Card2, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from './FeedStyle';
+import { Card, CardWork, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from './FeedStyle';
 import { TouchableOpacity } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
-import { UserProfile } from '../Profile/userProfile';
-
+import { auth, db } from '../../../Services/firebaseConfig';
+import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 
 export const PostCard = ({item}) => {
   const [like, setLike] = useState(false);
   const navigation = useNavigation();
-  
+  const [name, setName] = useState('');
+  const [name2, setName2] = useState('');
+  const user = auth.currentUser;
+  const listUserInfo =[];
+
+  const getDoc = async () =>{
+    try{
+      const q = query(collection(db, "users"), where("userId", "==", item.userId));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const { name }  = doc.data();
+        listUserInfo.push({ 
+          name,
+          id: doc.id
+        });
+        setName(name)
+      });
+    } catch(e){
+      console.log(e)}
+  }
+
+
+
+ 
+  useEffect(() => {
+    getDoc()
+  }, []);
 
   const pressLike =() => {
     if (like === false){
@@ -24,11 +51,11 @@ export const PostCard = ({item}) => {
   } else {
     if(item.postType !== 'Cliente'){
       return(
-      <Card2>
+      <CardWork>
           <UserInfo>
             <UserImg source={{uri: item.userImg}}/>
             <UserInfoText>
-              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{item.name}</UserName></TouchableOpacity>
+              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{name}</UserName></TouchableOpacity>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>
@@ -47,14 +74,14 @@ export const PostCard = ({item}) => {
               <InteractionText>Comentarios</InteractionText>
             </Interaction>
           </InteractionWrapper>
-        </Card2>)
+        </CardWork>)
     }else{
     return (
         <Card>
           <UserInfo>
             <UserImg source={{uri: item.userImg}}/>
             <UserInfoText>
-              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{item.name}</UserName></TouchableOpacity>
+              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{name}</UserName></TouchableOpacity>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>

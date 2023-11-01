@@ -9,12 +9,12 @@ export default function Welcome(){
     return(
         <View style={styles.container}>
             <View style={styles.containerLogo}>
-                {/* <Animatable.Image
+                <Animatable.Image
                     animation="flipInY"
-                    source={require('../../assets/LO.jpg')}
+                    source={require('../../../assets/LogoTeste5.png')}
                     style={{ width:'100%'}}
                     resizeMode="contain"
-                /> */}
+                />
             </View>
 
             <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>

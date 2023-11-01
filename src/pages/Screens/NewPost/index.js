@@ -8,7 +8,6 @@ import { collection, addDoc, Timestamp } from "firebase/firestore";
 import moment from 'moment';
 import SelectDropdown from 'react-native-select-dropdown'
 
-
 const NewPost = () => {
   const [image, setImage] = useState(null);
   const [cliente, setCliente] = useState(false);
@@ -33,7 +32,6 @@ const NewPost = () => {
       quality: 1,
       allowsMultipleSelection: true,
     });
-
     const source = result.assets[0].uri
     setImage(source)
   }; 
@@ -47,7 +45,7 @@ const NewPost = () => {
     if(cliente === false && avaliacao === false && trabalhador === false){
       Alert.alert('Escolha uma Categoria')
     
-    }else{
+    } else{
       if(cliente===true){
         if(value===''){
           Alert.alert('Caixa de Texto Vazia')
@@ -66,7 +64,6 @@ const NewPost = () => {
                   xhr.open("GET", image, true);
                   xhr.send(null);
                 });
-                
                 return blob;
             };
 
@@ -117,7 +114,6 @@ const NewPost = () => {
                       comments: null,
                       postType: 'Cliente',
                       orderTime: Date.now()
-
                     });
                     console.log("Document written with ID: ", docRef.id);
                   } catch (e) {
@@ -126,7 +122,7 @@ const NewPost = () => {
                 });
               }
             ); 
-          } else {
+          } else{
             try {
               const docRef = addDoc(collection(db, "posts"), {
                 userId:user.uid,
@@ -139,7 +135,6 @@ const NewPost = () => {
                 comments: null,
                 postType: 'Cliente',
                 orderTime: Date.now()
-
               });
               console.log("Document written with ID: ", docRef.id);
               console.log(image);
@@ -147,33 +142,34 @@ const NewPost = () => {
               console.error("Error adding document: ", e);
             }
           }
-        }}else if(avaliacao===true){
-                if (image !== null){
-                  const getBlobFroUri = async (uri) => {
-                    const blob = await new Promise((resolve, reject) => {
-                      const xhr = new XMLHttpRequest();
-                      xhr.onload = function () {
-                        resolve(xhr.response);
-                      };
-                      xhr.onerror = function (e) {
-                        reject(new TypeError("Network request failed"));
-                      };
-                      xhr.responseType = "blob";
-                      xhr.open("GET", image, true);
-                      xhr.send(null);
-                    });
+        }
+      }else if(avaliacao===true){
+        if (image !== null){
+          const getBlobFroUri = async (uri) => {
+            const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+              reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", image, true);
+            xhr.send(null);
+            });
                     
-                    return blob;
-                };
+           return blob;
+          };
     
-                const imageBlob = await getBlobFroUri(image);
-                const storageRef = ref(storage, 'image/' + Date.now());
-                const uploadTask = uploadBytesResumable(storageRef, imageBlob, metadata);
-    
-                uploadTask.on('state_changed',
-                  (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
+          const imageBlob = await getBlobFroUri(image);
+          const storageRef = ref(storage, 'image/' + Date.now());
+          const uploadTask = uploadBytesResumable(storageRef, imageBlob, metadata);
+
+          uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
     
                     switch (snapshot.state) {
                       case 'paused':
@@ -283,9 +279,10 @@ const NewPost = () => {
                     break;
   
                     case 'running':
+                      Alert.alert('Upload is ' + progress + '% done');
                       console.log('Upload is running');
                       if (progress===100){
-                        Alert.alert('concluido');
+                       
                       }
                     break; 
                   }
@@ -362,7 +359,7 @@ const cor = StyleSheet.create({
     height: 200,
     padding: 5,
     backgroundColor: 'white',
-    borderColor:cliente===true ? 'blue' : trabalhador===true ? 'green' : avaliacao===true ? 'yellow': 'black',
+    borderColor:cliente===true ? '#242E4E' : trabalhador===true ? '#193ef7' : avaliacao===true ? 'yellow': 'black',
     borderWidth: 1,
     borderRadius: 20,
     width: '90%',
@@ -605,9 +602,10 @@ const styles = StyleSheet.create({
   containerSelection:{
     flexDirection:'row',
     justifyContent:'space-between',
-    marginLeft: 10,
-    marginRight: 10
-  },
+    marginLeft: 25,
+    marginRight: 25,
+    marginBottom: 15
+    },
 
   buttonSelection:{
     backgroundColor: '#A2ACC3',
@@ -621,7 +619,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSelectionClient:{
-    backgroundColor: 'blue',
+    backgroundColor: '#242E4E',
     borderRadius: 100,
     width:110,
     alignItems:'center',
@@ -631,7 +629,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSelectionWorker:{
-    backgroundColor: 'green',
+    backgroundColor: '#193ef7',
     borderRadius: 100,
     width:110,
     alignItems:'center',
