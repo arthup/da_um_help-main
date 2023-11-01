@@ -8,6 +8,7 @@ import Screens from '../pages/Screens';
 import React from 'react';
 import userImages from '../pages/SignIn/userImages';
 import userInfo from '../pages/SignIn/userInfo';
+import Message from '../pages/Screens/Message';
 
 const Stack = createNativeStackNavigator();
 export default function Routes(){
@@ -62,7 +63,12 @@ export default function Routes(){
                 component={UserProfile}
                 options={{ headerShown: false}}
             />
-
+            
+            <Stack.Screen
+                name="Message"
+                component={Message}
+                options={{ headerShown: false}}
+            />
       
             
         </Stack.Navigator>

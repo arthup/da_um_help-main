@@ -24,6 +24,8 @@ export const Home = () => {
  
   const getPosts = async () => {
 
+
+
     if(filter===''){    
       try{
 
