@@ -13,6 +13,7 @@ export const Container2 = styled.View`
     background-color: #d0dde2;
     padding: 0px 20px 0px 20px;
 `;
+
 export const Card = styled.View`
     background-color: #f8f8f8;
     width: 100%;
@@ -55,6 +56,7 @@ export const UserInfoText = styled.View`
     flex-durection: column;
     justify-content: center;
     margin-left: 10px;
+    width: 80%
 `;
 
 export const UserName = styled.Text`

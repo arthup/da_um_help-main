@@ -59,7 +59,10 @@ const Docments = () => {
             cep: cep,
             estado: estado,
             cidade: cidade,
-            bairro: bairro
+            bairro: bairro,
+            numero: numero,
+            rua: rua,
+            complemento: complemento
         });
         
         navigation.navigate('userImages')

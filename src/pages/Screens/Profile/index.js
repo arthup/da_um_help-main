@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { signOut, updateProfile } from "firebase/auth";
 import { auth, db } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Button, ListRenderItemInfo, SectionList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, RefreshControl, FlatList, ScrollView, Button, ListRenderItemInfo, SectionList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'; 
-import { PostCard } from '../Home/PostCard';
+import { ProfilePostCard } from './profilePostCard';
 import { Container2, Divider } from '../Home/FeedStyle.js';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 const Profile = () => {
   const user = auth.currentUser;
@@ -16,16 +17,18 @@ const Profile = () => {
   const [userImg, setUserImg]=useState('');
   const [name, setName]=useState('');
   const [posts, setPosts]=useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const listUserInfo = [];
   const list = [];
 
-  const LogOut = () => {
-    signOut(auth).then(() => {
-      console.log('deslogado')
-      navigation.navigate('Welcome')
-    }).catch((error) => {
-    })
-  }
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(()=>{
+      getUserInfo()
+     getPosts(...posts)}, 2000)
+     setRefreshing(false)
+  };
+
 
   const getUserInfo = async () => {
     
@@ -57,7 +60,7 @@ const Profile = () => {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {comments, likes, post, postImage, postTime, userId, name, userImg, timeStamp, telefone}  = doc.data();
+        const {comments, likes, post, postImage, postTime, userId, name, userImg, timeStamp, telefone, postType}  = doc.data();
         list.push({ 
           name,
           comments, 
@@ -69,9 +72,9 @@ const Profile = () => {
           userImg,
           timeStamp,
           telefone,
+          postType,
           id: doc.id
         });
-        console.log(doc.id)
         setPosts(list);
       });
     } catch(e){
@@ -82,30 +85,21 @@ const Profile = () => {
   useEffect(() => {
     getUserInfo()
     getPosts()
-    console.log(posts)
   }, []);
 
 
- const teste = () =>{ 
-  return(
-  <View style={{ backgroundColor:'#d0dde2', bottom:-90}}>
-    <Text>DA UM HELP!</Text>
-  </View>)
- }
-  // const ListHeader = () =>{
-  //   return(
-      
-   
-  //   )
-  // }
-
   function renderItem({ item } ) {
-    return <PostCard item={item}/>
+    return <ProfilePostCard item={item}/>
   }
 
   return (
+    
 <View style={styles.container}>
-      <ScrollView>
+      <ScrollView 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      refreshing={refreshing} >
         <View>
           <Image source={{uri: userBackgroundImg ? userBackgroundImg : null}} style={styles.imageBackground}></Image>
         </View>
@@ -130,10 +124,6 @@ const Profile = () => {
           <Text style={styles.txtProfissao}>Pintor profissional</Text>
         </View>
       
-        <View style={styles.informations}>
-          <MaterialCommunityIcons name="account-search-outline" size={20} color="#242E4E"/>
-          <Text style={styles.txtProfissao}>Mais Informações</Text>
-        </View>
       
         {/* <Button onPress={LogOut} title='enviar'></Button> */}
         <View style={styles.containerPost}>
@@ -151,7 +141,6 @@ const Profile = () => {
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
         style={{width: "100%", height: '100%'}}
-        ListFooterComponent={teste}
       />
     </Container2>
     </ScrollView>
@@ -165,7 +154,7 @@ export default Profile;
 const styles=StyleSheet.create({
   container:{
     flex: 2,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "",
   },
 
   imageBackground:{

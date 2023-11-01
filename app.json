@@ -4,7 +4,7 @@
     "slug": "DaUmHelp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LO2.png",
+    "icon": "./assets/LogoTeste1.png",
     "userInterfaceStyle": "light",
     "plugins": [
       [
@@ -15,7 +15,7 @@
       ]
     ],
     "splash": {
-      "image": "./assets/LO2.png",
+      "image": "./assets/LogoTeste5.png",
       "resizeMode": "contain",
       "backgroundColor": "#2C8AD8"
     },
@@ -28,7 +28,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/LO2.png",
+        "foregroundImage": "./assets/LogoTeste5.png",
         "backgroundColor": "#2C8AD8"
       },
       "permissions": [
@@ -37,7 +37,7 @@
       "package": "com.arthupreiprei.DaUmHelp"
     },
     "web": {
-      "favicon": "./assets/LO2.png"
+      "favicon": "./assets/LogoTeste1.png"
     },
     "extra": {
       "eas": {

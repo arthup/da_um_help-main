@@ -1,18 +1,38 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../pages/Screens/Home/index';
 import Message from '../pages/Screens/Message';
 import NewPost from '../pages/Screens/NewPost/index';
 import Profile from '../pages/Screens/Profile/index';
 import Search from '../pages/Screens/Search/index';
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import Diarista from '../pages/Screens/Home/diarista';
 import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons'; 
 
 const Tab = createBottomTabNavigator();
 
 
-const icone = () =>{
-    return  <Entypo name="home" size={20} color='red' />
+const icone = ({item}) =>{
+    const [visibleModal, setVisibleModal] = useState(false);
+    return  (
+        <View>
+            <TouchableOpacity  onPress={() => setVisibleModal(true)}>
+                <Ionicons name="md-reorder-three-outline" size={36} color="white" style={{marginRight:10}}/>
+            </TouchableOpacity>
+
+            <Modal
+                animationType='fade'
+                visible={visibleModal}
+                transparent={true}
+                onRequestClose={() => setVisibleModal(false)}  
+            >
+                <Diarista
+                    handleClose={()=> setVisibleModal(false)}
+                    handleOpen={'1'}
+                    />
+            </Modal>
+        </View>
+        )
 }
 export default function Routes(){
 
@@ -22,10 +42,7 @@ export default function Routes(){
                 tabBarStyle:{
                     backgroundColor:'white',
                     borderTopColor:'transparent',
-        
                 },
-                
-
                 tabBarActiveTintColor:'#8BD7F3',
                 tabBarInactiveTintColor:'#242E4E',
 
@@ -33,7 +50,6 @@ export default function Routes(){
                     paddingTop: 9,
                     paddingBottom: 2
                 },
-
                 tabBarHideOnKeyboard:true
             }}
         >
@@ -43,7 +59,7 @@ export default function Routes(){
                 component={Home}
                 
                 options={{ 
-                    headerShown: true,
+                    headerShown: false,
                     headerRight:icone,
                     tabBarLabel:'',
                     headerStyle: {backgroundColor:'#2C8AD8'},
