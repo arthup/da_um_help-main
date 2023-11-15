@@ -12,7 +12,7 @@ export const ProfilePostCard = ({item}) => {
   const [visibleModal, setVisibleModal] = useState(false);
   const navigation = useNavigation();
   const [name, setName] = useState('');
-  const [name2, setName2] = useState('');
+  const [userImg, setUserImg] = useState('');
   const user = auth.currentUser;
   const listUserInfo =[];
   
@@ -22,12 +22,14 @@ export const ProfilePostCard = ({item}) => {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const { name }  = doc.data();
+        const { name, userImg }  = doc.data();
         listUserInfo.push({ 
           name,
+          userImg,
           id: doc.id
         });
         setName(name)
+        setUserImg(userImg)
       });
     } catch(e){
       console.log(e)}
@@ -54,7 +56,7 @@ export const ProfilePostCard = ({item}) => {
     if(item.postType === 'Avaliação'){
       <CardAvaliation>
           <UserInfo>
-            <UserImg source={{uri: item.userImg}}/>
+            <UserImg source={{uri: userImg ? userImg : null}}/>
             <UserInfoText>
                 <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
                     <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
@@ -102,7 +104,7 @@ export const ProfilePostCard = ({item}) => {
       return(
       <CardWork>
           <UserInfo>
-            <UserImg source={{uri: item.userImg}}/>
+            <UserImg source={{uri: userImg ? userImg : null}}/>
             <UserInfoText>
                 <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
                     <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
@@ -153,7 +155,7 @@ export const ProfilePostCard = ({item}) => {
     return (
       <Card>
       <UserInfo>
-        <UserImg source={{uri: item.userImg}}/>
+        <UserImg source={{uri: userImg ? userImg : null}}/>
         <UserInfoText>
             <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
                 <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
@@ -200,7 +202,3 @@ export const ProfilePostCard = ({item}) => {
     </Card>
     );
   }}}
-  
-
-  
-

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, FlatList, TouchableWithoutFeedback, Image, Keyboard, Alert, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Alert, ScrollView } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { storage, auth, db } from '../../../Services/firebaseConfig';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 import { Ionicons, AntDesign, Feather  } from '@expo/vector-icons';
-import { collection, addDoc, Timestamp } from "firebase/firestore"; 
+import { collection, addDoc, doc } from "firebase/firestore"; 
 import moment from 'moment';
 import SelectDropdown from 'react-native-select-dropdown'
 
@@ -21,11 +21,12 @@ const NewPost = () => {
   const [cargo, setCargo] = useState('');
   const user = auth.currentUser;
   const date = moment().utcOffset('-03:00').format('DD/MM/YYYY HH:mm:ss');
+  const userUpdate = doc(db, "users", user.uid);
   
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       base64:true,
       aspect: [4,3],
@@ -398,115 +399,111 @@ const RatingBar = () => {
     
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView>
-      <SafeAreaView  style={styles.backColor}>
-      
-        <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
-
-        <View>
-          <Text style={styles.textHeader}>Crie sua Postagem</Text>
-        </View>
-
-        <View style={styles.container}>
+        <SafeAreaView  style={styles.backColor}>
+        
+          <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
 
           <View>
-            <View style={styles.containerSelection}>
-              <View>
-               <TouchableOpacity style={cliente === true ? styles.buttonSelectionClient : styles.buttonSelection} onPress={()=> (setCliente(true) + setTrabalhador(false) + setCargo(''))}>
-                  <Text style={styles.textSelection}>Cliente</Text>
-                </TouchableOpacity> 
-                
+            <Text style={styles.textHeader}>Crie sua Postagem</Text>
+          </View>
+
+          <View style={styles.container}>
+
+            <View>
+              <View style={styles.containerSelection}>
+                <View>
+                <TouchableOpacity style={cliente === true ? styles.buttonSelectionClient : styles.buttonSelection} onPress={()=> (setCliente(true) + setTrabalhador(false) + setCargo(''))}>
+                    <Text style={styles.textSelection}>Cliente</Text>
+                  </TouchableOpacity> 
+                  
+                </View>
+
+                <View>
+                <TouchableOpacity style={trabalhador === true ? styles.buttonSelectionWorker : styles.buttonSelection}  onPress={()=> (setTrabalhador(true) + setCliente(false) + setAvaliacao(false) + console.log(cargo))}>
+                  {cargo === '' && trabalhador === true? Alert.alert('Escolha uma profissão'):undefined}
+                    <Text style={styles.textSelection}>Trabalhador</Text>
+                  </TouchableOpacity>
+
+                  
+                </View>
+  {/* 
+                <View>
+                  <TouchableOpacity style={avaliacao === true ? styles.buttonSelectionAvaliantion : styles.buttonSelection}  onPress={()=> (setCliente(false) + setTrabalhador(false) + setAvaliacao(true))}>
+                    <Text  style={styles.textSelection}>Avaliação</Text>
+                  </TouchableOpacity>
+                </View> */}
               </View>
 
-              <View>
-               <TouchableOpacity style={trabalhador === true ? styles.buttonSelectionWorker : styles.buttonSelection}  onPress={()=> (setTrabalhador(true) + setCliente(false) + setAvaliacao(false) + console.log(cargo))}>
-                {cargo === '' && trabalhador === true? Alert.alert('Escolha uma profissão'):undefined}
-                  <Text style={styles.textSelection}>Trabalhador</Text>
-                </TouchableOpacity>
+              {trabalhador === true ?
+                <View style={styles.containerSelectBar}>
+                  <SelectDropdown
+                  rowStyle={{backgroundColor:'#f8ff8f',  borderRadius:10, marginTop: 2}}
+                  
+                  selectedRowStyle={{backgroundColor:'green'}}
+                  searchInputStyle={{backgroundColor:'black'}}
+                  buttonStyle={styles.selectBar}
+                  buttonTextStyle={{fontSize:13}}
+                  
+                  // buttonTextStyle={styles.textButtonImage}
+                  defaultButtonText='Selecione uma Profissão' 
+                  dropdownIconPosition='right'
+                  renderDropdownIcon={icone}
+                  
+                  dropdownStyle={{ backgroundColor:'transparent', height:315}}
+                  data={trabalhos}
+                  onSelect={(selectedItem, index) => {
+                    console.log(selectedItem, index)
+                    setCargo(selectedItem)
 
-                
+                    }
+                  }
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    return selectedItem
+                    }
+                  }
+                  rowTextForSelection={(item, index) => {
+                    return item
+                    }
+                  }/>
+                  </View>: undefined}
+                  
+                  {/* {avaliacao === true ? <View>
+                    <RatingBar/>
+                  </View>: undefined} */}
+
+              <View style={cor.cor}>
+                <TextInput   
+                  multiline
+                  numberOfLines= {20}
+                  maxLength={280}
+                  onChangeText={text => setValue(text)}
+                  value={value}
+                  style={styles.textArea}
+                  placeholder='Do que você está precisando?'
+                />
               </View>
-{/* 
-              <View>
-                <TouchableOpacity style={avaliacao === true ? styles.buttonSelectionAvaliantion : styles.buttonSelection}  onPress={()=> (setCliente(false) + setTrabalhador(false) + setAvaliacao(true))}>
-                  <Text  style={styles.textSelection}>Avaliação</Text>
-                </TouchableOpacity>
-              </View> */}
-            </View>
-
-            {trabalhador === true ?
-              <View style={styles.containerSelectBar}>
-                <SelectDropdown
-                rowStyle={{backgroundColor:'#f8ff8f',  borderRadius:10, marginTop: 2}}
-                
-                selectedRowStyle={{backgroundColor:'green'}}
-                searchInputStyle={{backgroundColor:'black'}}
-                buttonStyle={styles.selectBar}
-                buttonTextStyle={{fontSize:13}}
-                
-                // buttonTextStyle={styles.textButtonImage}
-                defaultButtonText='Selecione uma Profissão' 
-                dropdownIconPosition='right'
-                renderDropdownIcon={icone}
-                
-                dropdownStyle={{ backgroundColor:'transparent', height:315}}
-                data={trabalhos}
-	              onSelect={(selectedItem, index) => {
-                  console.log(selectedItem, index)
-                  setCargo(selectedItem)
-
-                  }
-                }
-	              buttonTextAfterSelection={(selectedItem, index) => {
-                  return selectedItem
-                  }
-                }
-                rowTextForSelection={(item, index) => {
-                  return item
-                  }
-                }/>
-                </View>: undefined}
-                
-                {/* {avaliacao === true ? <View>
-                  <RatingBar/>
-                </View>: undefined} */}
-
-            <View style={cor.cor}>
-              <TextInput   
-                multiline
-                numberOfLines= {20}
-                maxLength={280}
-                onChangeText={text => setValue(text)}
-                value={value}
-                style={styles.textArea}
-                placeholder='Do que você está precisando?'
-              />
-            </View>
-            
-            <View style={styles.buttonPickImage}>
               
-              <Text style={styles.textButtonImage}>Adicione uma imagem:</Text>
-              <TouchableOpacity onPress={pickImage}>
-                <Ionicons name="md-images-outline" size={24} color="#A2ACC3" />
-              </TouchableOpacity>
+              <View style={styles.buttonPickImage}>
+                
+                <Text style={styles.textButtonImage}>Adicione uma imagem:</Text>
+                <TouchableOpacity onPress={pickImage}>
+                  <Ionicons name="md-images-outline" size={24} color="#A2ACC3" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            
+          
+            <View style={styles.containerImage}>
+              {image && <Image source={{uri:image}} style={styles.imagePost}/>} 
+            </View>     
+
+            <View style={styles.containerButtonUpload}>
+              <TouchableOpacity style={styles.buttonUpload} onPress={submitData}>
+                <Text style={styles.btnUploadText}>Postar</Text>
+                </TouchableOpacity>
             </View>
           </View>
-          
-        
-          <View style={styles.containerImage}>
-            {image && <Image source={{uri:image}} style={styles.imagePost}/>} 
-          </View>     
-
-          <View style={styles.containerButtonUpload}>
-            <TouchableOpacity style={styles.buttonUpload} onPress={submitData}>
-              <Text style={styles.btnUploadText}>Postar</Text>
-              </TouchableOpacity> 
-
-         
-          </View>
-            
-        </View>
-    
-      </SafeAreaView>
+        </SafeAreaView>
       </ScrollView>
     </TouchableWithoutFeedback>
     

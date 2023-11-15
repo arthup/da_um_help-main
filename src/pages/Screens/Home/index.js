@@ -9,9 +9,16 @@ import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 
 export const Home = () => {
-  const [posts, setPosts]=useState('')
-  const [users, setUsers]=useState('')
+  const [posts, setPosts]=useState('');
+  const [users, setUsers]=useState('');
   const list = [];
+  const [todos, setTodos] = useState(true);
+  const [diarista, setDiarista] = useState(false);
+  const [eletricista, setEletricista] = useState(false);
+  const [pedreiro, setPedreiro] = useState(false);
+  const [pintor, setPintor] = useState(false);
+  const [montador, setMontador] = useState(false);
+  const [outros, setOutros] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [filter, setFilter] = useState('');
 
@@ -23,12 +30,8 @@ export const Home = () => {
   });
  
   const getPosts = async () => {
-
-
-
     if(filter===''){    
       try{
-
         const q = query(collection(db, 'posts'), orderBy('orderTime', 'desc'))
         const querySnapshot = await getDocs(q);
         
@@ -49,9 +52,7 @@ export const Home = () => {
             id: doc.id
 
           });
-          
           setPosts(list);
-          
         });
 
       } catch(e){
@@ -264,9 +265,46 @@ export const Home = () => {
 
   function renderItem({ item } ) {
     return <PostCard item={item}/>
-  }
 
+  }
   const Diarista = ({handleClose, handleOpen}) => {
+
+    const controller = () =>{
+      handleClose()
+      onRefresh()
+    }
+
+
+
+  const cor = StyleSheet.create({
+    btnWorksSelect:{
+      margin: 5,
+      width: '70%',
+      height: '10%',
+      padding: 8,
+      borderRadius: 10,
+      justifyContent:'center',
+      alignItems:'center',
+      alignContent:'center',
+      borderWidth: 0.8,
+      borderColor: "#fff",
+      backgroundColor: '#2C8AD8' 
+    },
+
+    btnWorks:{
+      margin: 5,
+      width: '70%',
+      height: '10%',
+      padding: 8,
+      borderRadius: 10,
+      justifyContent:'center',
+      alignItems:'center',
+      alignContent:'center',
+      borderWidth: 0.8,
+      borderColor: "#fff",
+    },
+   
+  });
 
     return (
       <SafeAreaView style={styles.container}>
@@ -276,29 +314,29 @@ export const Home = () => {
           </View>
   
           <View style={styles.containerButton}>
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter(''))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={todos ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('') + setTodos(true) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Todos</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Diarista'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={diarista ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Diarista') + setTodos(false) + setDiarista(true) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Diarista</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Eletricista'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={eletricista ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Eletricita') + setTodos(false) + setDiarista(false) + setEletricista(true) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Eletricista</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Pedreiro'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={pedreiro ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Pedreiro') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(true) + setPintor(false) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Pedreiro</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Pintor'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={pintor ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Pintor') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(true) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Pintor</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Montador'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={montador ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() =>(setFilter('Montador') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(true))}> 
               <Text style={styles.txtBtnWorks}>Montador</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.btnWorks} onPress={handleClose} onPressIn={() => (setFilter('Outros'))} onPressOut={onRefresh}> 
+            <TouchableOpacity style={outros ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() =>(setFilter('Outros') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(true) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
               <Text style={styles.txtBtnWorks}>Outros</Text>
             </TouchableOpacity>
 
@@ -311,36 +349,34 @@ export const Home = () => {
   return (
 
     <Container>
+      <View style={styles.containerHeader}>
 
-      <View
-        style={{
-          position: 'absolute',
-          zIndex: 99,
-          width: '120%',
-          height: '10.5%',
-          padding: 10,
-          backgroundColor: "#2C8AD8",
-          alignItems: 'center',
-          justifyContent:'space-between',
-          flexDirection: 'row',
-          overflow: 'hidden'
-        }}> 
-          <Text>Da Um Help!</Text>
-          <TouchableOpacity onPress={() => setVisibleModal(true)}>
-            <Ionicons name="md-reorder-three-outline" size={36} color="white" style={{marginRight:10}}/>
-          </TouchableOpacity>
-          <Modal
-                animationType='fade'
-                visible={visibleModal}
-                transparent={true}
-                onRequestClose={() => setVisibleModal(false)}  
+        <Image source={require('../../../assets/IconeTelaHome2.jpg')} style={{ width:'12%', height:'85%'}}/> 
+
+          <Text style={styles.textHeader}>Dá um Help!</Text>
+
+          <View>
+            <TouchableOpacity onPress={() => setVisibleModal(true)}>
+              <Ionicons name="md-reorder-three-outline" size={36} color="white"/>
+            </TouchableOpacity>
+
+            <Modal
+              animationType='fade'
+              visible={visibleModal}
+              transparent={true}
+              onRequestClose={() => setVisibleModal(false)}  
             >
-                <Diarista
-                    handleClose={()=> setVisibleModal(false)}
-                    handleOpen={'1'}
-                    />
+
+              <Diarista
+                handleClose={()=> setVisibleModal(false)}
+                handleOpen={'1'}
+              />
             </Modal>
+        </View>
+          
       </View>
+
+   
 
       <FlatList
           data={posts}
@@ -348,26 +384,40 @@ export const Home = () => {
           keyExtractor={item=> item.id}
           initialNumToRender={3}
           showsVerticalScrollIndicator={false}
-          style={{width: "105%", marginTop: 100}}
+          style={{width: "105%", marginTop: '19%'}}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           refreshing={refreshing} 
         />
     </Container>
-   
   );
 }
 
 export default Home;
 
-
-
-
 const styles = StyleSheet.create({
   container:{
     flex: 1,
+  },
 
+  textHeader:{
+    fontSize:18,
+    color: 'white',
+    fontWeight: 'bold', 
+  },
+
+  containerHeader:{
+    position: 'absolute',
+    zIndex: 99,
+    width: '140%',
+    height: '10%',
+    padding: 10,
+    backgroundColor: "#2C8AD8",
+    alignItems: 'center',
+    justifyContent:'space-around',
+    flexDirection: 'row',
+    overflow: 'hidden',
   },
 
   content:{
@@ -383,9 +433,9 @@ const styles = StyleSheet.create({
     width: '95%',
     height:'70%',
     position:'absolute',
-  
     top:1
   },
+
   containerTxt:{
     alignItems:'center',
     justifyContent:'center',
@@ -396,7 +446,6 @@ const styles = StyleSheet.create({
     fontSize:18,
     fontWeight:'bold',
     color: "#fff",
-    
   },
 
   containerButton:{
@@ -410,18 +459,5 @@ const styles = StyleSheet.create({
     color: "#fff",
 
   },
-  btnWorks:{
-    margin: 5,
-    width: '70%',
-    height: '10%',
-    padding: 8,
-    borderRadius: 10,
-    justifyContent:'center',
-    alignItems:'center',
-    alignContent:'center',
-    borderWidth: 0.8,
-    borderColor: "#fff",
-    // backgroundColor: '#2C8AD8'
-  },
- 
+
 });

@@ -2,7 +2,7 @@ import React, { useState, useEffect, Component } from 'react';
 import { auth, db } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal, SafeAreaView } from 'react-native';
 import { Feather, FontAwesome5, MaterialCommunityIcons, Foundation,MaterialIcons } from '@expo/vector-icons'; 
 import { PostCard } from '../Home/PostCard.js';
 import { Container2 } from '../Home/FeedStyle.js';
@@ -21,39 +21,41 @@ import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore";
   const [posts, setPosts]=useState('');
   const listUserInfo = [];
   const list = [];
-  const ID = user.uid + item.route.params.userId
+  const requestId = user.uid + item.route.params.userId
   const [modalActive, setModalActive]=useState('')
   const [requestAccepted, setRequestAccepted]=useState(false);
 
   const getTelefone = async () => {
     try{
-        const q = query(collection(db, "users"), where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
+      const q = query(collection(db, "users"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
   
-        querySnapshot.forEach((doc) => {
-          const {telefone}  = doc.data();
-          ({ 
-            telefone,
-          });
+      querySnapshot.forEach((doc) => {
+        const {telefone}  = doc.data();
+        ({ 
+          telefone,
+        });
+
           setTelefoneUser(telefone);
         }); 
       } catch (e) {
         console.error("Error adding document: ", e);
       }}
-  const submitRequest = async () => {
 
-      try{  
-    const docRef = (collection(db, "request"), {
-      userId:user.uid,
-      name: user.displayName,
-      userImg: user.photoURL,
-      requestId: item.route.params.userId,
-      ID: ID,
-      telefoneContato: telefoneUser,
-      requestTime: Date.now(),
-      requestAccepted: requestAccepted
-    });
-    setDoc(doc(db, "request", ID), docRef);
+  const submitRequest = async () => {
+    try{  
+      const docRef = (collection(db, "request"), {
+        userId:user.uid,
+        name: user.displayName,
+        userImg: user.photoURL,
+        requestUserId: item.route.params.userId,
+        requestId: requestId,
+        telefoneContato: telefoneUser,
+        requestTime: Date.now(),
+        requestAccepted: requestAccepted
+      });
+
+    setDoc(doc(db, "request", requestId), docRef);
     console.log("Document written with ID: ", docRef);
       
   } catch (e) {
@@ -61,6 +63,7 @@ import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore";
   }
   setModalActive(false)
 }
+
   const getUserInfo = async () => {
     
     try{
@@ -91,7 +94,7 @@ import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore";
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {comments, likes, post, postImage, postTime, userId, name, userImg, id, telefone}  = doc.data();
+        const {comments, likes, post, postImage, postTime, userId, name, userImg, postType, telefone}  = doc.data();
         list.push({ 
           name,
           comments, 
@@ -102,6 +105,7 @@ import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore";
           userId,
           userImg,
           telefone,
+          postType,
           id: doc.id
         });
         setPosts(list);
@@ -117,107 +121,89 @@ import { addDoc, setDoc, doc, deleteDoc } from "firebase/firestore";
     getTelefone()
   }, []);
 
-
- const teste = () =>{ 
-  return(
-  <View style={{ backgroundColor:'#d0dde2', bottom:-90}}>
-    <Text>DA UM HELP!</Text>
-  </View>)
- }
-
   function renderItem({ item } ) {
     return <PostCard item={item}/>
   }
 
   return (
-
-<View style={styles.container}>
-<StatusBar  backgroundColor="#2C8AD8" barStyle="ligth-content"/>
+    <SafeAreaView style={styles.container}>
+      <StatusBar  backgroundColor="#2C8AD8" barStyle="ligth-content"/>
       <ScrollView>
-        
         <View style={styles.containerBackground}>
-          
           <Image source={{uri: userBackgroundImg ? userBackgroundImg : null}} style={styles.imageBackground}/>
           <Feather onPress={() =>(navigation.navigate('Screens'))} name="arrow-left" size={24} color="white" style={styles.iconVoltar}/>
-         
         </View>
-        
+          
         <View style={styles.containerProfile}>
           <Image source={{uri: userImg ? userImg : null}} style={styles.imageProfile}></Image>
         </View>
-      
+        
         <View style={styles.containerUserName}>
           <Text style={styles.userName}>{name}</Text>
         </View>
-      
+        
         <View style={styles.perfil}>
           <Text style={styles.bio}>@perfil_teste</Text>
         </View>
+
         <Modal
-        visible={modalActive}
-        transparent={true}
-        animationType='fade'
-        onRequestClose={() => setModalActive(false)}
+          visible={modalActive}
+          transparent={true}
+          animationType='fade'
+          onRequestClose={() => setModalActive(false)}
         >
           <View style={styles.outerView}>
             <View style={styles.modalView}>
-            <Text style={{fontSize: 35, fontWeight:"bold", marginBottom:18}}>Contatar {name}</Text>
+              <Text style={{fontSize: 35, fontWeight:"bold", marginBottom:18}}>Contatar {name}</Text>
               <Text style={{fontSize: 15}}>Ao clicar em confirmar você concorda em compartilhar seu telefone com <Text style={{fontSize: 15, fontWeight:"bold"}}>{name}</Text>.</Text>
+              
               <TouchableOpacity onPress={submitRequest}>
                 <View style={styles.confirmContact}>
-                  <Text style={styles.txtConfirmContact}>
-                    Confirmar
-                  </Text>
+                  <Text style={styles.txtConfirmContact}>Confirmar</Text>
                 </View>
               </TouchableOpacity>
+
               <TouchableOpacity onPress={() => setModalActive(false)}>
                 <View style={styles.cancelContact}>
-                  <Text style={styles.txtConfirmContact}>
-                    Recusar
-                  </Text>
+                  <Text style={styles.txtConfirmContact}>Recusar</Text>
                 </View>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
+
         <TouchableOpacity  onPress={() => setModalActive(true)}>
-        <View style={styles.profissao}>
-          <MaterialIcons name="connect-without-contact" size={30} color="#242E4E"/>
-          <Text style={styles.txtProfissao}>Contatar</Text>
-        </View>
+          <View style={styles.profissao}>
+            <MaterialIcons name="connect-without-contact" size={30} color="#242E4E"/>
+            <Text style={styles.txtProfissao}>Contatar</Text>
+          </View>
         </TouchableOpacity>
-      
+        
         <View style={styles.informations}>
           <MaterialCommunityIcons name="account-search-outline" size={20} color="#242E4E"/>
           <Text style={styles.txtProfissao}>Mais Informações</Text>
         </View>
-      
-        {/* <Button onPress={LogOut} title='enviar'></Button> */}
+        
         <View style={styles.containerPost}>
           <Text style={styles.postagens}>Postagens</Text>
         </View>
+
         <View style={styles.space}></View>
-        
 
-
-    <Container2>
-      <FlatList
-        data={posts}
-        renderItem={renderItem}
-        keyExtractor={item=> item.id}
-        scrollEnabled={false}
-        showsVerticalScrollIndicator={false}
-        style={{width: "100%", height: '100%'}}
-        ListFooterComponent={teste}
-      />
-    </Container2>
-    </ScrollView>
-    </View>
-
+        <Container2>
+          <FlatList
+            data={posts}
+            renderItem={renderItem}
+            keyExtractor={item=> item.id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            style={{width: "100%", height: '100%'}}
+          />
+        </Container2>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-
 
 const styles=StyleSheet.create({
   container:{

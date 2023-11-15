@@ -56,7 +56,7 @@ const Profile = () => {
   const getPosts = async () => {
     
     try{
-      const q = query(collection(db, "posts"), where("userId", "==", user.uid));
+      const q = query(collection(db, "posts"), where("userId", "==", user.uid), orderBy('orderTime', 'desc'));
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
@@ -124,8 +124,6 @@ const Profile = () => {
           <Text style={styles.txtProfissao}>Pintor profissional</Text>
         </View>
       
-      
-        {/* <Button onPress={LogOut} title='enviar'></Button> */}
         <View style={styles.containerPost}>
           <Text style={styles.postagens}>Postagens</Text>
         </View>

@@ -9,6 +9,7 @@ import React from 'react';
 import userImages from '../pages/SignIn/userImages';
 import userInfo from '../pages/SignIn/userInfo';
 import Message from '../pages/Screens/Message';
+import Avalition from '../pages/Screens/Message/avaliation';
 
 const Stack = createNativeStackNavigator();
 export default function Routes(){
@@ -67,6 +68,12 @@ export default function Routes(){
             <Stack.Screen
                 name="Message"
                 component={Message}
+                options={{ headerShown: false}}
+            />
+
+            <Stack.Screen
+                name="Avaliation"
+                component={Avalition}
                 options={{ headerShown: false}}
             />
       

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { signOut, updateProfile } from "firebase/auth";
 import {View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput} from "react-native";
-import { auth, db } from '../../../Services/firebaseConfig';
+import { auth, db, storage } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
-import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import MaskInput, { Masks } from 'react-native-mask-input';
+import * as ImagePicker from 'expo-image-picker';
+import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
 const EditProfile =  () => {
 
-  const RG_MASK = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d || ''/,]
-  const [name2, setName2]=useState('');
+  const [imageProfile, setImageProfile] = useState(null);
+  const [imageBackground, setImageBackground] = useState(null);
   const listUserInfo =[];
   const [cpf, setCpf] = useState('');
   const [rg, setRg] = useState('');
@@ -31,6 +33,158 @@ const EditProfile =  () => {
   const [passHide, setpassHide] = useState(true);
   const navigation = useNavigation();
   const user = auth.currentUser;
+  const userUpdate = doc(db, "users", user.uid);
+  
+  const pickProfileImg = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      base64:true,
+      aspect: [4,3],
+      quality: 1
+    });
+
+    const source = result.assets[0].uri;
+    setImageProfile(source);
+  };
+    
+  const pickBackgroundImg = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      base64:true,
+      aspect: [4,3],
+      quality: 1
+  });
+  
+    const source = result.assets[0].uri;
+    setImageBackground(source);
+  }; 
+    
+  const submitData = async () =>{
+    const metadata = {
+      contentType: 'image/jpeg',
+    };
+  
+    const getBlobFroUriProfile = async (uri) => {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", imageProfile, true);
+        xhr.send(null);
+      });
+
+      return blob;
+    };
+
+    const getBlobFroUriBacgkground = async (uri) => {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", imageBackground, true);
+        xhr.send(null);
+      });
+      return blob;
+    };
+
+    const storageRefProfile = ref(storage, 'image/' + Date.now());
+    const imageBlobProfile = await getBlobFroUriProfile(imageProfile);
+    const uploadTaskProfile = uploadBytesResumable(storageRefProfile, imageBlobProfile, metadata);
+
+    const storageRefBackground = ref(storage, 'imageBack/' + Date.now());
+    const imageBlobBackground = await getBlobFroUriBacgkground(imageBackground);
+    const uploadTaskBackground = uploadBytesResumable(storageRefBackground, imageBlobBackground, metadata);
+
+  
+    uploadTaskProfile.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break; 
+        }
+      }, 
+      (error) => {
+        switch (error.code) {
+          case 'storage/unauthorized':
+            break;
+          case 'storage/canceled':
+            break;
+          case 'storage/unknown':
+            break;
+        }
+      }, 
+      () => {
+        getDownloadURL(uploadTaskProfile.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          try {
+            updateProfile(auth.currentUser, {
+              photoURL: downloadURL
+            })
+            updateDoc(userUpdate, {
+              userImg: downloadURL
+            });
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+        });
+      }
+    );
+
+    uploadTaskBackground.on( 'state_changed', (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+      switch (snapshot.state) {
+        case 'paused':
+          console.log('Upload is paused');
+          break;
+        case 'running':
+          console.log('Upload is running2');
+          break; 
+      }
+    }, 
+    (error) => {
+      switch (error.code) {
+        case 'storage/unauthorized':
+          break;
+        case 'storage/canceled':
+          break;
+        case 'storage/unknown':
+          break;
+      }
+    },
+    () => { 
+      getDownloadURL(uploadTaskBackground.snapshot.ref).then((downloadURL) => {
+      console.log('File available at', downloadURL);
+  
+      try {
+        updateDoc(userUpdate, {
+          userBackgroundImg: downloadURL
+        });
+          console.log('funfou')
+          navigation.navigate('Perfil')
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }})
+    });
+  }
 
   const LogOut = () => {
     signOut(auth).then(() => {
@@ -95,32 +249,33 @@ const EditProfile =  () => {
   }, []);
 
   
-  const teste = () =>{
-  const washingtonRef = doc(db, "users", user.uid);
+  const Update = () =>{
 
- updateDoc(washingtonRef, {
-  name: name,
-  nameSearch: name.toUpperCase(),
-  telefone: telefone,
-  senha: senha,
-  cep: cep,
-  estado: estado,
-  cidade: cidade,
-  bairro: bairro,
-  rua: rua,
-  numero: numero,
-  complemento: complemento
-});
-try {
-  updateProfile(auth.currentUser, {
-    displayName: name
-  })
-} catch (e) {
-  console.error("Error adding document: ", e);
-}
+    const Search = doc(db, "users", user.uid);
+      updateDoc(Search, {
+        name: name,
+        nameSearch: name.toUpperCase(),
+        telefone: telefone,
+        senha: senha,
+        cep: cep,
+        estado: estado,
+        cidade: cidade,
+        bairro: bairro,
+        rua: rua,
+        numero: numero,
+        complemento: complemento
+      });
 
+      try {
+        updateProfile(auth.currentUser, {
+          displayName: name
+        })
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
 
-  }
+      submitData();
+    }
 
     return (
       <ScrollView>
@@ -133,21 +288,21 @@ try {
 
             <Text style={styles.message}>Editar Perfil</Text>
 
-            <TouchableOpacity  onPress={teste}>
+            <TouchableOpacity  onPress={Update}>
               <Feather name="check" size={24} color="white" style={styles.iconConfirmar}/>
             </TouchableOpacity>
           </View>
           
-          <View style={styles.containerInfo}>
+          <View style={styles.containerInfoProfile}>
             <View>
-              <TouchableOpacity>
-                <Image source={{uri: userBackgroundImg ? userBackgroundImg : null}} style={styles.backgroundImage}></Image>
+              <TouchableOpacity onPress={pickBackgroundImg}>
+                <Image source={{uri: imageBackground === null ? userBackgroundImg || null : imageBackground || null}} style={styles.backgroundImage}></Image>
               </TouchableOpacity>
             </View>
 
-            <View style={styles.perfil}>
-              <TouchableOpacity>
-                <Image source={{uri: userImg ? userImg : null}} style={styles.imagePerfil}></Image>
+            <View style={styles.containerPerfil}>
+              <TouchableOpacity onPress={pickProfileImg}>
+                <Image source={{uri: imageProfile === null ? userImg || null : imageProfile || null}} style={styles.imagePerfil}></Image>
               </TouchableOpacity>
             </View>
 
@@ -155,43 +310,43 @@ try {
               <Text style={styles.text}>Informações Pessoais</Text>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Nome</Text>
+                <Text style={styles.infoText}>Nome</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
-                  style={styles.inputName}
+                  style={styles.input}
                   value={name}
                   onChangeText={(text) => setName(text)}
                 />
               </View>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Email</Text>
+                <Text style={styles.infoText}>Email</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={email}
-                  style={styles.inputUsuario}
+                  style={styles.input}
                   editable={false}
                 />
               </View>
             </View>
             
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Telefone</Text>
+                <Text style={styles.infoText}>Telefone</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <MaskInput
                   value={telefone}
-                  style={styles.inputBio}
+                  style={styles.input}
                   onChangeText={(text) => setTelefone(text)}
                   mask={Masks.BRL_PHONE}
                   keyboardType='numeric'
@@ -199,169 +354,178 @@ try {
               </View>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>CPF</Text>
+                <Text style={styles.infoText}>CPF</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={cpf}
-                  style={styles.inputBio}
+                  style={styles.input}
                   editable={false}
                 />
               </View>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>RG</Text>
+                <Text style={styles.infoText}>RG</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={rg}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   editable={false}
                 />
               </View>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Data de Nascimento</Text>
+                <Text style={styles.infoText}>Data de Nascimento</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={dataNasc}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   editable={false}
                 />
               </View>
             </View>
 
-            <View style={styles.informations}>
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Senha</Text>
+                <Text style={styles.infoText}>Senha</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={senha}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   secureTextEntry={passHide}
                   onChangeText={(text) => setSenha(text)}
                 />
-                 <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
-                                <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
-                            </TouchableOpacity> 
+
+                 <TouchableOpacity onPress={() => setpassHide(!passHide)}>
+                    <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="gray"/>
+                  </TouchableOpacity> 
               </View>
             </View>
 
             <View style={styles.containerText}>
               <Text style={styles.text}>Endereço</Text>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>CEP</Text>
+                <Text style={styles.infoText}>CEP</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <MaskInput
                   value={cep}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setCep(text)}
                   mask={Masks.ZIP_CODE}
                   keyboardType='numeric'
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Estado</Text>
+                <Text style={styles.infoText}>Estado</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={estado}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setEstado(text)}
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Cidade</Text>
+                <Text style={styles.infoText}>Cidade</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={cidade}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setCiadade(text)}
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Bairro</Text>
+                <Text style={styles.infoText}>Bairro</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={bairro}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setBairro(text)}
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Rua</Text>
+                <Text style={styles.infoText}>Rua</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={rua}
                   onChangeText={(text) => setRua(text)}
-                  style={styles.inputPassword}
+                  style={styles.input}
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Numero</Text>
+                <Text style={styles.infoText}>Numero</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={numero}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setNumero(text)}
                 />
               </View>
             </View>
-            <View style={styles.informations}>
+
+            <View style={styles.containerInfo}>
               <View> 
-                <Text style={styles.informacaoUsuario}>Complemento</Text>
+                <Text style={styles.infoText}>Complemento</Text>
               </View>
 
-              <View style={styles.textInputPassword}>
+              <View style={styles.textInput}>
                 <TextInput
                   value={complemento}
-                  style={styles.inputPassword}
+                  style={styles.input}
                   onChangeText={(text) => setCompleto(text)}
                 />
               </View>
             </View>
 
-            <TouchableOpacity style={styles.profissao} onPress={LogOut}>
-              <FontAwesome5 name="user-cog" size={20} color="white" style={styles.iconProfissao}/>
-              <Text style={styles.txtProfissao}>Mudar para conta profissional</Text>
+            <View style={styles.containerBtnExit}>
+            <TouchableOpacity style={styles.btnExit} onPress={LogOut}>
+              <Ionicons name="exit-outline" size={28} color="white" style={styles.iconBtnExit}/>
+              <Text style={styles.txtBtnExit}>Sair da conta</Text>
             </TouchableOpacity>
+            </View>
           </View>
-
         </View>
       </ScrollView>
     );
@@ -373,7 +537,7 @@ const styles=StyleSheet.create({
   container:{
     flex: 1,
     alignItems: 'center',
-    backgroundColor: "#4FB9FF",
+    backgroundColor: "#2C8AD8",
   },
 
   containerHeader:{
@@ -385,7 +549,7 @@ const styles=StyleSheet.create({
     height: 80,
   },
 
-  containerInfo:{
+  containerInfoProfile:{
     backgroundColor: 'white',
     height: '100%',
     width: '100%',
@@ -424,7 +588,7 @@ const styles=StyleSheet.create({
   text:{
     fontSize:18,
     fontWeight:'bold',
-    color: 'gray'
+
   },
 
   backgroundImage:{
@@ -434,29 +598,27 @@ const styles=StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-
-  perfil:{
-    alignItems: 'center',
-  },
-
   imagePerfil:{
     width: 100, 
     height: 100, 
     borderRadius: 100, 
     borderWidth: 3,
-    borderColor: 'gray',
+    borderColor: '#A2ACC3',
     marginTop: -50,
     alignSelf: 'center',
     marginBottom: 10,
   },
+  containerPerfil:{
+    alignItems: 'center',
+  },
 
-  informations:{
+  containerInfo:{
     paddingBottom: 30,
     marginLeft: 10,
     marginRight: 10,
   },
 
-  informacaoUsuario:{
+  infoText:{
     fontSize: 15, 
     fontWeight: 'bold',
     color: 'gray',
@@ -464,14 +626,14 @@ const styles=StyleSheet.create({
     paddingBottom: 10,
   },
 
-  textInputPassword: {
+  textInput: {
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 12,
   },
 
-  inputName:{
+  input:{
     borderBottomWidth: 1,
     height: 40,
     marginBottom: 8,
@@ -481,41 +643,30 @@ const styles=StyleSheet.create({
     width: '100%',
   },
 
-  inputUsuario:{
-    borderBottomWidth: 1,
-    height: 40,
-    marginBottom: 8,
-    fontSize: 16,
-    borderWidth: 0,
-    position: 'absolute',
-    width: '100%',
+  containerBtnExit:{
+    width: '100%', 
+  
   },
 
-  inputBio:{
-    borderBottomWidth: 1,
-    height: 40,
-    marginBottom: 8,
-    fontSize: 16,
-    borderWidth: 0,
-    position: 'absolute',
-    width: '100%',
+  txtBtnExit:{
+    paddingTop: 4,
+    alignSelf: 'center',
+    color: 'white',
+    fontWeight: 'bold',
   },
 
-  inputPassword:{
-    borderBottomWidth: 1,
-    height: 40,
-    marginBottom: 8,
-    fontSize: 16,
-    borderWidth: 0,
-    position: 'absolute',
-    width: '100%',
+  iconBtnExit:{
+    width: 26,
+    height: 26,
+    marginRight: 10,
   },
 
-  profissao:{
+  btnExit:{
+
     alignSelf: 'center', 
     alignItems: 'center',
     flexDirection: 'row', 
-    justifyContent: 'center', 
+    justifyContent:'center', 
     width: '90%', 
     paddingBottom: 10, 
     paddingTop: 10,
@@ -524,50 +675,8 @@ const styles=StyleSheet.create({
     elevation: 5, 
     marginTop: 30,
     alignSelf: 'center',
-    backgroundColor:"#d6e9ff",
+    backgroundColor:"#FF0000",
     marginBottom: 30,
-  },
 
-  logout:{
-    alignSelf: 'center', 
-    alignItems: 'center',
-    flexDirection: 'row', 
-    justifyContent: 'center', 
-    width: '90%', 
-    paddingBottom: 10, 
-    paddingTop: 10,
-    borderRadius: 10, 
-    shadowOpacity: 200, 
-    elevation: 5, 
-    marginTop: 10,
-    alignSelf: 'center',
-    backgroundColor:"#d6e9ff",
-    marginBottom: 40,
-  },
-
-  txtProfissao:{
-    paddingTop: 4,
-    alignSelf: 'center',
-    color: 'white',
-    fontWeight: 'bold',
-  },
-
-  txtLogout:{
-    paddingTop: 4,
-    alignSelf: 'center',
-    color: 'white',
-    fontWeight: 'bold',
-  },
-
-  iconProfissao:{
-    width: 25,
-    height: 25,
-    marginRight: 10,
-  },
-
-  iconLogout:{
-    width: 25,
-    height: 25,
-    marginRight: 10,
-  },
+  }
 });

@@ -10,7 +10,7 @@ export const PostCard = ({item}) => {
   const [like, setLike] = useState(false);
   const navigation = useNavigation();
   const [name, setName] = useState('');
-  const [name2, setName2] = useState('');
+  const [userImg, setUserImg] = useState('');
   const user = auth.currentUser;
   const listUserInfo =[];
 
@@ -20,19 +20,18 @@ export const PostCard = ({item}) => {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const { name }  = doc.data();
+        const { name, userImg }  = doc.data();
         listUserInfo.push({ 
           name,
+          userImg,
           id: doc.id
         });
         setName(name)
+        setUserImg(userImg)
       });
     } catch(e){
       console.log(e)}
   }
-
-
-
  
   useEffect(() => {
     getDoc()
@@ -53,9 +52,9 @@ export const PostCard = ({item}) => {
       return(
       <CardWork>
           <UserInfo>
-            <UserImg source={{uri: item.userImg}}/>
+          <TouchableOpacity onPress={()=>( item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)  )}><UserImg source={{uri: userImg ? userImg : null}}/></TouchableOpacity>
             <UserInfoText>
-              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{name}</UserName></TouchableOpacity>
+              <TouchableOpacity onPress={()=>(  item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)   )}><UserName>{name}</UserName></TouchableOpacity>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>
@@ -79,9 +78,9 @@ export const PostCard = ({item}) => {
     return (
         <Card>
           <UserInfo>
-            <UserImg source={{uri: item.userImg}}/>
+          <TouchableOpacity onPress={()=>( item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)  )}><UserImg source={{uri: userImg ? userImg : null}}/></TouchableOpacity>
             <UserInfoText>
-              <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}><UserName>{name}</UserName></TouchableOpacity>
+              <TouchableOpacity onPress={()=>( item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)   )}><UserName>{name}</UserName></TouchableOpacity>
               <PostTime>{item.postTime}</PostTime>
             </UserInfoText>
           </UserInfo>
