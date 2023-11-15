@@ -12,6 +12,8 @@ const Message = () =>{
   const [users, setUsers]=useState('')
   const list = [];
   const user = auth.currentUser
+  
+
 
   useBackHandler(() =>{
     if(1 == 1){
@@ -21,7 +23,7 @@ const Message = () =>{
  
   const getRequests = async () => {
     try{
-      const q = query(collection(db, "request"), where ("requestId", '==', user.uid));
+      const q = query(collection(db, "request"), where("requestId", '==', user.uid));
       
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -49,6 +51,20 @@ const Message = () =>{
     getRequests()
   }, []);
 
+  const [refreshing, setRefreshing] = useState(false);
+  
+  const onRefresh = () => {
+    
+    setRefreshing(true);
+    setTimeout(()=>{
+ 
+      getRequests(...requests)   
+      }, 2000)
+   setRefreshing(false);
+  };
+  
+ console.log(requests)
+
   function renderItem({ item } ) {
     return <RequestCard item={item}/>
   }
@@ -68,6 +84,10 @@ const Message = () =>{
           initialNumToRender={3}
           showsVerticalScrollIndicator={false}
           style={{width: "105%"}}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          refreshing={refreshing} 
         />
       </Container>
 
