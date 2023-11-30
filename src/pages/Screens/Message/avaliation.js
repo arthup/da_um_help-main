@@ -1,31 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, StatusBar, TouchableWithoutFeedback, Image, Keyboard, Modal } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { storage, auth, db } from '../../../Services/firebaseConfig';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
-import { Ionicons, AntDesign, Feather  } from '@expo/vector-icons';
+import { Ionicons, Feather  } from '@expo/vector-icons';
 import { collection, addDoc, doc, deleteDoc } from "firebase/firestore"; 
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
+import * as Progress from 'react-native-progress';
 
 const Avalition = (ID) => {
   const [image, setImage] = useState(null);
-  const [cliente, setCliente] = useState(false);
-  const [trabalhador, setTrabalhador] = useState(false);
-  const [avaliacao, setAvaliacao] = useState(false);
+  const [progressBar, setProgressBar] = useState(0);
+  const [visibleModal, setVisibleModal] = useState(false);
   const [rating, setRanting] = useState('');
   const [value, setValue] = useState('');
   const trabalhos = ["Diarista", "Eletricista", "Pedreiro", "Pintor", "Montador", "Outros"];
   const [defaultRating, setDefaultRating] = useState(0);
   const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
-  const [cargo, setCargo] = useState('');
   const user = auth.currentUser;
   const date = moment().utcOffset('-03:00').format('DD/MM/YYYY HH:mm:ss');
   const userUpdate = doc(db, "users", user.uid);
   const navigation = useNavigation();
   
-
-  console.log(ID.route.params)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -40,7 +37,6 @@ const Avalition = (ID) => {
   }; 
   
   const submitData = async () =>{
-
     const metadata = {
       contentType: 'image/jpeg',
     };
@@ -70,7 +66,7 @@ const Avalition = (ID) => {
         (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log('Upload is ' + progress + '% done');
-    
+            setProgressBar(progress)
             switch (snapshot.state) {
                 case 'paused':
                     console.log('Upload is paused');
@@ -78,10 +74,6 @@ const Avalition = (ID) => {
     
                 case 'running':
                     console.log('Upload is running');
-                    if (progress===100){
-                        Alert.alert('concluido');
-                        navigation.navigate('Home')
-                    }
                 break; 
             }
         }, 
@@ -110,7 +102,8 @@ const Avalition = (ID) => {
                         comments: null,
                         postType: 'Avaliação',
                         rating: rating,
-                        orderTime: Date.now()
+                        orderTime: Date.now(),
+                        requestUserId: ID.route.params.a1
                     });
                         console.log("Document written with ID: ", docRef.id);
                     } catch (e) {
@@ -132,22 +125,21 @@ const Avalition = (ID) => {
                     comments: null,
                     postType: 'Avaliação',
                     rating: rating,
-                    orderTime: Date.now()
-                    
+                    orderTime: Date.now(),
+                    requestUserId: ID.route.params.a1
                   });
                   console.log("Document written with ID: ", docRef.id);
                 
-                  navigation.navigate('Dá um Help!')
-               
+                  navigation.navigate('Screens');
                 } catch (e) {
                   console.error("Error adding document: ", e);
                 }
               
             } 
-            
+            deletPost()
           }
 
-
+console.log(ID.route.params.a1)
 const RatingBar = () => {
   return (
     <View style={styles.ratingBarStyle}>
@@ -175,23 +167,24 @@ const RatingBar = () => {
 };
 
 const deletPost = async () =>{
-    await deleteDoc(doc(db, "request", ID.route.params));
+    await deleteDoc(doc(db, "request", ID.route.params.a2));
   }
  
 
   return (
     
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView>
-        <SafeAreaView  style={styles.backColor}>
-        
+        <SafeAreaView  style={styles.container}>
           <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
 
-          <View>
-            <Text style={styles.textHeader}>Avalie o trabalho realizado!</Text>
+          <View style={styles.containerHeader}>
+            <TouchableOpacity style={styles.iconVoltar} onPress={()=>(navigation.navigate('Mensagem'))}>
+              <Feather name="arrow-left" size={35} color="white" />
+            </TouchableOpacity>
+            <Text style={styles.textHeader}>Avalie o Trabalho!</Text>
           </View>
 
-          <View style={styles.container}>
+          <View style={styles.containerForm}>
 
             <View>
                 <RatingBar/>
@@ -219,51 +212,99 @@ const deletPost = async () =>{
           
             <View style={styles.containerImage}>
               {image && <Image source={{uri:image}} style={styles.imagePost}/>} 
-            </View>     
+            </View>
+
+            <Modal
+              animationType='none'
+              visible={visibleModal}
+              transparent={true}
+              onRequestClose={() => setVisibleModal(false)}  
+            >
+              <SafeAreaView style={styles.containerModal}>
+
+                <View style={styles.containerProgressBar}>
+                  <Progress.Circle progress={progressBar===0 ? 0 : progressBar } indeterminate={false} size={200} showsText={true} textStyle={{fontSize: 25, color: '#d6e9ff'}} color={'#d6e9ff'}/>
+                </View>
+
+                <TouchableOpacity style={styles.buttonModal} onPressIn={() => setVisibleModal(false) + navigation.navigate('Screens')} disabled={progressBar === 100 ? false : true}>
+                  <Text style={styles.buttonTextModal}>Concluir</Text>
+                </TouchableOpacity>
+              </SafeAreaView>
+            </Modal>     
 
             <View style={styles.containerButtonUpload}>
-              <TouchableOpacity style={styles.buttonUpload} onPress={submitData} onPressIn={deletPost}>
+              <TouchableOpacity style={styles.buttonUpload} onPress={submitData} onPressIn={() => setVisibleModal(true)}>
                 <Text style={styles.btnUploadText}>Postar</Text>
                 </TouchableOpacity>
             </View>
           </View>
         </SafeAreaView>
-      </ScrollView>
     </TouchableWithoutFeedback>
-    
   );
-  }
-
+}
 export default Avalition;
 
 const styles = StyleSheet.create({
-  backColor:{
+  container: {
+    width: "100%",
+    flex: 1,
     backgroundColor: "#2C8AD8",
-    height:900,
-    width:'100%'
-  
   },
 
-  container:{
-    marginTop: 30,
-    backgroundColor: "#f8f8f8",
-    height:'100%',
-    width:'100%'
+  containerHeader: {
+    flexDirection: "row",
+    width: "100%",
+    marginTop: '14%',
+    marginBottom: '8%',
+    paddingStart: '5%',
+  },
 
-  }, 
-
-  containerImage:{
+  containerModal:{
+    height: '100%',
+    width:'100%',
+    justifyContent:'center',
     alignItems: 'center',
-    width: '60%',
-    height: '20%',
-    alignSelf: 'center',
-    marginTop: -48
+    backgroundColor: '#000202CF',
+    alignContent:'center',
   },
 
-  imagePost:{
-    width: '140%', 
-    height: '140%', 
-    borderRadius: 20
+  buttonModal:{
+    backgroundColor:"#d6e9ff",
+    width: '80%',
+    alignSelf: 'center',
+    borderRadius: 50,
+    paddingVertical: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:'-18%'
+  },
+
+  buttonTextModal:{
+    color: "#5A6687",
+    fontSize: 15,
+    fontWeight: 'bold', 
+  },
+
+  containerForm: {
+    height: "100%",
+    width: "100%",
+    backgroundColor: "#f8f8f8",
+    flex: 2,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
+  buttonSelectionStyle:{
+    marginTop: 2,
+    borderRadius: 15,
+    backgroundColor: "#8BD7F3",
+    borderColor: '#8BD7F3',
+  },
+
+  selectedRowStyle:{
+    backgroundColor: "#193ef7",
+    borderColor: "#193ef7",
+    borderWidth: 1
   },
 
   textArea:{
@@ -273,13 +314,43 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
 
+  buttonPickImage: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: '95%',
+    flexDirection: 'row',
+    marginTop: 20,
+    paddingLeft: 23
+  },
+
+  textButtonImage:{
+    color: '#A2ACC3',
+    fontWeight: 'bold',
+    fontSize: 15,
+
+  },
+
+  containerImage:{
+    alignItems: 'center',
+    width: '60%',
+    height: "20%",
+    alignSelf: 'center',
+    marginTop: 20
+  },
+
+  imagePost:{
+    width: '100%', 
+    height: '100%', 
+    borderRadius: 20
+  },
+
   containerButtonUpload:{
-    marginTop: '30%',
+    marginTop: "8%"
   },
 
   buttonUpload:{
     alignItems: 'center',
-    height: "26%",
+    height: "28%",
     backgroundColor: "#2C8AD8",
     width: '80%',
     alignSelf: 'center',
@@ -287,109 +358,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  textButtonImage:{
-    color: '#A2ACC3',
-    fontWeight: 'bold',
-    fontSize: 15,
-    marginBottom: 5,
-    marginRight: '40%',
-    paddingStart: '5%',
-  },
-
-  buttonPickImage:{
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    height: '15%',
-    width: '95%',
-    flexDirection: 'row',
-    marginBottom: 25,
-  },
-
   btnUploadText:{
     color: "#ffffff",
     fontSize: 18,
     fontWeight: 'bold',
-  },    
-  
-  textHeader:{  
+  },   
+
+  textHeader: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
-    marginTop: 12,
-    marginBottom: 0,
-    marginLeft: 20,
-  },
-
-  containerSelection:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    marginLeft: 25,
-    marginRight: 25,
-    marginBottom: 15
-    },
-
-  buttonSelection:{
-    backgroundColor: '#A2ACC3',
-    borderRadius: 100,
-    width:110,
-    alignItems:'center',
-    height: 30,
-    justifyContent:'center',
-    marginTop:10
-   
-  },
-
-  buttonSelectionClient:{
-    backgroundColor: '#242E4E',
-    borderRadius: 100,
-    width:110,
-    alignItems:'center',
-    height: 30,
-    justifyContent:'center',
-    marginTop:10
-  },
-
-  buttonSelectionWorker:{
-    backgroundColor: '#193ef7',
-    borderRadius: 100,
-    width:110,
-    alignItems:'center',
-    height: 30,
-    justifyContent:'center',
-    marginTop:10
-   
-  },
-
-  buttonSelectionAvaliantion:{
-    backgroundColor: 'yellow',
-    borderRadius: 100,
-    width:110,
-    alignItems:'center',
-    height: 30,
-    justifyContent:'center',
-    marginTop:10
-   
-  },
-  textSelection:{
-    fontSize: 15,
-    fontWeight:'bold',
-    color:'white'
-  },
-
-  selectBar:{
-    width: '60%',
-    height:'100%',
-    borderWidth:1,
-    borderRadius: 10,
-    backgroundColor: 'pink'
-  },
-
-  containerSelectBar:{
-    justifyContent: 'center',
-    alignItems:'center',
-    width:'100%',
-    height:'10%',
-    marginTop:10
+    color: '#fff',
   },
 
   starImageStyle:{
@@ -404,23 +382,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
 
-  txtInputNameWorker:{
-    borderBottomWidth: 1,
-    height: '100%',
-    width:  '80%',
-    fontSize: 16,
-    marginTop: 10
-  },
-
-  containerTxtInputNameWorker:{
-    width: '100%',
-    height: 60,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent:'center'
-  },
-
   containerTextArea:{   
     marginTop: 40,
     height: 200,
@@ -432,12 +393,4 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
-
-  txtNameWorker:{
-    fontSize: 15,
-    color: '#A2ACC3',
-    fontWeight:'bold',
-    marginTop: 30,
-  }
-
 });

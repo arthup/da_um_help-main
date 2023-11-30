@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from '../../Services/firebaseConfig';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -55,7 +55,6 @@ const SignIn = () => {
                         userImg: null,
                 
                     };
-
                     setDoc(doc(db, "users", user.uid), docRef);
                     console.log("Document written with ID: ", docRef.id);
                 } catch (e) {
@@ -63,13 +62,19 @@ const SignIn = () => {
                 }
                     navigation.navigate('userInfo')
             }).catch((error) => {
+
             });
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode)
-        })
+            if(errorCode=='auth/email-already-in-use'){
+                Alert.alert('Email ja existente!')
+            } else if( errorCode == 'auth/invalid-email'){
+                Alert.alert('Email inválido!')
+                }
+            })
     };
 
     return(
@@ -83,7 +88,8 @@ const SignIn = () => {
                     {error == true && name==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                         <TextInput
                             placeholder='Nome Completo'
-                            style={styles.input}
+                            placeholderTextColor={"#A2ACC3"}
+                            style={styles.inputName}
                             value={name}
                             onChangeText={(text) => setName(text) && (error == false && name ==="")}
                         />
@@ -91,7 +97,8 @@ const SignIn = () => {
                     {error == true && email==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                         <TextInput
                             placeholder='Email'
-                            style={styles.input}
+                            placeholderTextColor={"#A2ACC3"}
+                            style={styles.inputEmail}
                             value={email}
                             onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
                         />
@@ -102,6 +109,7 @@ const SignIn = () => {
                             <TextInput
                                 placeholder='Senha'
                                 style={styles.inputPassword}
+                                placeholderTextColor={"#A2ACC3"}
                                 secureTextEntry={passHide}
                                 value={password}
                                 onChangeText={(text) => setPassword(text) && (error == false && password ==="")}
@@ -120,6 +128,7 @@ const SignIn = () => {
                         <View style={styles.textInputPassword}>
                             <TextInput
                                 placeholder='Confirmar Senha'
+                                placeholderTextColor={"#A2ACC3"}
                                 style={styles.inputPassword}
                                 value={password_confirm}
                                 secureTextEntry={passHide2}
@@ -131,6 +140,8 @@ const SignIn = () => {
                             </TouchableOpacity> 
                         </View>
 
+
+                        <View style={styles.space}></View>
                         { name === "" || email === "" || password === "" || password_confirm === "" || password !== password_confirm
                             ? 
                                 <TouchableOpacity 
@@ -149,7 +160,7 @@ const SignIn = () => {
                         }
                     
                         <TouchableOpacity style={styles.buttonLogin} onPress={() => navigation.navigate('LogIn')}>
-                            <Text style={styles.buttonLoginText}>Já tenho uma conta</Text>
+                            <Text style={styles.buttonLoginText}>Já possui uma conta?</Text>
                         </TouchableOpacity>
                 </Animatable.View>
             </View>
@@ -158,7 +169,7 @@ const SignIn = () => {
 };
 
 export default SignIn;
- 
+
 const styles = StyleSheet.create({
     container:{
         flex: 2,
@@ -186,10 +197,22 @@ const styles = StyleSheet.create({
         paddingEnd: '5%',
     },
 
-    input:{
+    space:{
+        height: '37.5%'
+    },
+
+    inputName:{
         borderBottomWidth: 1,
         height: 40,
-        marginBottom: 8,
+        marginBottom: "3%",
+        fontSize: 16,
+        marginTop: "3%"
+    },
+
+    inputEmail:{
+        borderBottomWidth: 1,
+        height: 40,
+        marginBottom: "3%",
         fontSize: 16,
     },
 
@@ -197,7 +220,6 @@ const styles = StyleSheet.create({
         color: "#f00a0a",
         fontSize: 12,
         fontWeight: 'bold',
-
     },
 
     buttonRegister:{
@@ -208,7 +230,6 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        bottom: '-37%',
     },
 
     buttonRegisterText:{
@@ -220,7 +241,6 @@ const styles = StyleSheet.create({
     buttonLogin:{
         marginTop: 14,
         alignSelf: 'center',
-        bottom: '-37%',
     },
 
     buttonLoginText:{
@@ -234,9 +254,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 12,
-     },
+    },
 
-     inputPassword:{
+    inputPassword:{
         borderBottomWidth: 1,
         height: 40,
         marginBottom: 8,

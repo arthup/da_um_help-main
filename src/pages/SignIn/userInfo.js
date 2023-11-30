@@ -74,14 +74,20 @@ const Docments = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.container}>
                         <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-                            <Text style={styles.message}>Informações Pessoais</Text>
+                            <Text style={styles.message}>Informações Adicionais</Text>
                         </Animatable.View>
 
                         <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+                            
+                            <View style={styles.containerText}>
+                            <Text style={styles.text}>Informações Pessoais</Text>
+                            </View>
+
                             {error == true && cpf==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     mask={Masks.BRL_CPF}
                                     placeholder='CPF'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={cpf}
                                     onChangeText={(text) => setCpf(text) && (error == false && cpf ==="")}
@@ -91,6 +97,7 @@ const Docments = () => {
                             {error == true && rg==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     placeholder='RG'
+                                    placeholderTextColor={"#A2ACC3"}
                                     mask={RG_MASK}
                                     style={styles.input}
                                     onChangeText={(text) => setRg(text) && (error == false && rg ==="")}
@@ -126,16 +133,22 @@ const Docments = () => {
                                 <MaskInput
                                     mask={Masks.BRL_PHONE}
                                     placeholder='Telefone'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={telefone}
                                     onChangeText={(text) => setTelefone(text) && (error == false && telefone ==="")}
                                     keyboardType='numeric'
                                 />
 
+                            <View style={styles.containerText}>
+                            <Text style={styles.text}>Endereço</Text>
+                            </View> 
+
                             {error == true && cep==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     mask={Masks.ZIP_CODE}
                                     placeholder='CEP'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={cep}
                                     onChangeText={(text) => setCep(text) && (error == false && cep ==="")}
@@ -144,7 +157,8 @@ const Docments = () => {
 
                             {error == true && estado==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
-                                    placeholder='Estado Ex: SP'
+                                    placeholder='UF'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={estado}
                                     maxLength={2}
@@ -155,6 +169,7 @@ const Docments = () => {
                             {error == true && cidade==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     placeholder='Cidade'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={cidade}
                                     onChangeText={(text) => setCiadade(text) && (error == false && cidade ==="")}
@@ -163,6 +178,7 @@ const Docments = () => {
                             {error == true && bairro==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     placeholder='Bairro'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={bairro}
                                     onChangeText={(text) => setBairro(text) && (error == false && bairro ==="")}
@@ -171,6 +187,7 @@ const Docments = () => {
                             {error == true && rua==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     placeholder='Rua'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={rua}
                                     onChangeText={(text) => setRua(text) && (error == false && rua ==="")}
@@ -179,6 +196,7 @@ const Docments = () => {
                             {error == true && numero==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}
                                 <MaskInput
                                     placeholder='Número'
+                                    placeholderTextColor={"#A2ACC3"}
                                     maxLength={5}
                                     style={styles.input}
                                     value={numero}
@@ -189,6 +207,7 @@ const Docments = () => {
                             <Text style={styles.warningMessage}/>
                                 <MaskInput
                                     placeholder='Complemento'
+                                    placeholderTextColor={"#A2ACC3"}
                                     style={styles.input}
                                     value={complemento}
                                     onChangeText={(text) => setCompleto(text) && (error == false && complemento ==="")}
@@ -221,7 +240,7 @@ const Docments = () => {
 };
 
 export default Docments;
- 
+
 const styles = StyleSheet.create({
     container:{
         flex: 2,
@@ -232,6 +251,17 @@ const styles = StyleSheet.create({
         marginTop: '14%',
         marginBottom: '8%',
         paddingStart: '5%',
+    },
+
+    containerText:{
+        alignItems: 'center',
+        marginTop: "8%"
+    },
+
+    text:{
+        fontSize:18,
+        fontWeight:'bold',
+        color: "#5A6687"
     },
 
     message:{
@@ -268,8 +298,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         borderRadius: 50,
         paddingVertical: 14,
-        marginTop: 19,
-        marginBottom: 25,
+        marginTop: "10%",
+        marginBottom: "14%",
         justifyContent: 'center',
         alignItems: 'center',
         
@@ -287,9 +317,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 7,
         marginBottom: 15,
-     },
+    },
 
-     inputPassword:{
+    inputPassword:{
         borderBottomWidth: 1,
         height: 40,
         marginBottom: 8,

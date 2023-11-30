@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { signOut, updateProfile } from "firebase/auth";
-import {View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput} from "react-native";
+import {View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput, Modal, SafeAreaView} from "react-native";
 import { auth, db, storage } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import MaskInput, { Masks } from 'react-native-mask-input';
 import * as ImagePicker from 'expo-image-picker';
 import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
+import * as Progress from 'react-native-progress';
 
 const EditProfile =  () => {
 
@@ -15,6 +16,7 @@ const EditProfile =  () => {
   const [imageBackground, setImageBackground] = useState(null);
   const listUserInfo =[];
   const [cpf, setCpf] = useState('');
+  const [bio, setBio] = useState('');
   const [rg, setRg] = useState('');
   const [dataNasc, setDataNasc] = useState('');
   const [email, setEmail] = useState('');
@@ -32,6 +34,8 @@ const EditProfile =  () => {
   const [name, setName]=useState('');
   const [passHide, setpassHide] = useState(true);
   const navigation = useNavigation();
+  const [progressBar, setProgressBar] = useState(0);
+  const [visibleModal, setVisibleModal] = useState(false);
   const user = auth.currentUser;
   const userUpdate = doc(db, "users", user.uid);
   
@@ -66,7 +70,10 @@ const EditProfile =  () => {
       contentType: 'image/jpeg',
     };
   
-    const getBlobFroUriProfile = async (uri) => {
+    if(imageProfile === null && imageBackground === null){
+      undefined
+    }else if(imageProfile !== null && imageBackground !== null){
+      const getBlobFroUriProfile = async (uri) => {
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -79,7 +86,6 @@ const EditProfile =  () => {
         xhr.open("GET", imageProfile, true);
         xhr.send(null);
       });
-
       return blob;
     };
 
@@ -107,11 +113,11 @@ const EditProfile =  () => {
     const imageBlobBackground = await getBlobFroUriBacgkground(imageBackground);
     const uploadTaskBackground = uploadBytesResumable(storageRefBackground, imageBlobBackground, metadata);
 
-  
     uploadTaskProfile.on('state_changed',
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log('Upload is ' + progress + '% done');
+        setProgressBar(progress)
         switch (snapshot.state) {
           case 'paused':
             console.log('Upload is paused');
@@ -179,11 +185,130 @@ const EditProfile =  () => {
           userBackgroundImg: downloadURL
         });
           console.log('funfou')
-          navigation.navigate('Perfil')
       } catch (e) {
         console.error("Error adding document: ", e);
       }})
-    });
+    });}else if(imageBackground === null && imageProfile !== null){
+      const getBlobFroUriProfile = async (uri) => {
+        const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            resolve(xhr.response);
+          };
+          xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+          };
+          xhr.responseType = "blob";
+          xhr.open("GET", imageProfile, true);
+          xhr.send(null);
+        });
+        return blob;
+      };
+      const storageRefProfile = ref(storage, 'image/' + Date.now());
+      const imageBlobProfile = await getBlobFroUriProfile(imageProfile);
+      const uploadTaskProfile = uploadBytesResumable(storageRefProfile, imageBlobProfile, metadata);
+
+    uploadTaskProfile.on('state_changed',
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+      setProgressBar(progress)
+      switch (snapshot.state) {
+        case 'paused':
+          console.log('Upload is paused');
+          break;
+        case 'running':
+          console.log('Upload is running');
+          break; 
+      }
+    }, 
+    (error) => {
+      switch (error.code) {
+        case 'storage/unauthorized':
+          break;
+        case 'storage/canceled':
+          break;
+        case 'storage/unknown':
+          break;
+      }
+    }, 
+    () => {
+      getDownloadURL(uploadTaskProfile.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+        try {
+          updateProfile(auth.currentUser, {
+            photoURL: downloadURL
+          })
+          updateDoc(userUpdate, {
+            userImg: downloadURL
+          });
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      });
+    }
+  );
+
+    }else if(imageBackground !== null && imageProfile === null){
+
+      const getBlobFroUriBacgkground = async (uri) => {
+        const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            resolve(xhr.response);
+          };
+          xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+          };
+          xhr.responseType = "blob";
+          xhr.open("GET", imageBackground, true);
+          xhr.send(null);
+        });
+        return blob;
+      };
+
+      const storageRefBackground = ref(storage, 'imageBack/' + Date.now());
+      const imageBlobBackground = await getBlobFroUriBacgkground(imageBackground);
+      const uploadTaskBackground = uploadBytesResumable(storageRefBackground, imageBlobBackground, metadata);
+
+      uploadTaskBackground.on( 'state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        setProgressBar(progress)
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running2');
+            break; 
+        }
+      }, 
+      (error) => {
+        switch (error.code) {
+          case 'storage/unauthorized':
+            break;
+          case 'storage/canceled':
+            break;
+          case 'storage/unknown':
+            break;
+        }
+      },
+      () => { 
+        getDownloadURL(uploadTaskBackground.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+    
+        try {
+          updateDoc(userUpdate, {
+            userBackgroundImg: downloadURL
+          });
+            console.log('funfou')
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }})
+      });
+
+    }
   }
 
   const LogOut = () => {
@@ -200,7 +325,7 @@ const EditProfile =  () => {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        const {userBackgroundImg, userImg, name, bairro, cep, cidade, complemento, cpf, dataNasc, email, estado, numero, password, rg, rua, telefone}  = doc.data();
+        const {userBackgroundImg, userImg, name, bairro, cep, cidade, complemento, cpf, dataNasc, email, estado, numero, password, rg, rua, telefone, bio}  = doc.data();
         listUserInfo.push({ 
           userBackgroundImg,
           userImg,
@@ -219,6 +344,7 @@ const EditProfile =  () => {
           rua, 
           telefone,
           email,
+          bio,
           id: doc.id
         });
 
@@ -238,7 +364,7 @@ const EditProfile =  () => {
         setRua(rua);
         setSenha(password);
         setTelefone(telefone);
-      
+        setBio(bio)
       });
     } catch(e){
       console.log(e)}
@@ -250,7 +376,6 @@ const EditProfile =  () => {
 
   
   const Update = () =>{
-
     const Search = doc(db, "users", user.uid);
       updateDoc(Search, {
         name: name,
@@ -263,7 +388,8 @@ const EditProfile =  () => {
         bairro: bairro,
         rua: rua,
         numero: numero,
-        complemento: complemento
+        complemento: complemento,
+        bio: bio
       });
 
       try {
@@ -273,23 +399,30 @@ const EditProfile =  () => {
       } catch (e) {
         console.error("Error adding document: ", e);
       }
+      if(visibleModal=== false){
+        navigation.navigate('Perfil')
+      }else{
+        setVisibleModal(true)
+      }
 
       submitData();
     }
 
-    return (
+  return (
       <ScrollView>
         <View style={styles.container}>
 
           <View style={styles.containerHeader}>
-            <TouchableOpacity onPress={()=>(navigation.navigate('Perfil'))}>
-              <Feather name="arrow-left" size={24} color="white" style={styles.iconVoltar}/>
+            <TouchableOpacity style={styles.iconVoltar} onPress={()=>(navigation.navigate('Perfil'))}>
+              <Feather name="arrow-left" size={35} color="white" />
             </TouchableOpacity>
 
-            <Text style={styles.message}>Editar Perfil</Text>
+            <View style={styles.containerMessage}>
+              <Text style={styles.message}>Editar Perfil</Text>
+            </View>
 
-            <TouchableOpacity  onPress={Update}>
-              <Feather name="check" size={24} color="white" style={styles.iconConfirmar}/>
+            <TouchableOpacity style={styles.iconConfirmar} onPress={Update}>
+              <Ionicons name="md-checkmark-sharp" size={35} color="white" />
             </TouchableOpacity>
           </View>
           
@@ -304,6 +437,24 @@ const EditProfile =  () => {
               <TouchableOpacity onPress={pickProfileImg}>
                 <Image source={{uri: imageProfile === null ? userImg || null : imageProfile || null}} style={styles.imagePerfil}></Image>
               </TouchableOpacity>
+            </View>
+
+            <View style={styles.containerBio}>
+              <Text style={styles.infoText}>Bio:</Text>
+
+                <View style={styles.cor}>
+                  <TextInput   
+                    multiline
+                    numberOfLines= {20}
+                    maxLength={280}
+                    onChangeText={(text) => setBio(text)}
+                    value={bio}
+                    style={styles.textArea}
+                    placeholder='Digite aqui'
+                    placeholderTextColor={"#A2ACC3"}
+                  />
+                </View>
+    
             </View>
 
             <View style={styles.containerText}>
@@ -409,8 +560,8 @@ const EditProfile =  () => {
                   onChangeText={(text) => setSenha(text)}
                 />
 
-                 <TouchableOpacity onPress={() => setpassHide(!passHide)}>
-                    <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="gray"/>
+                  <TouchableOpacity onPress={() => setpassHide(!passHide)}>
+                    <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
                   </TouchableOpacity> 
               </View>
             </View>
@@ -519,6 +670,24 @@ const EditProfile =  () => {
               </View>
             </View>
 
+            <Modal
+              animationType='none'
+              visible={visibleModal}
+              transparent={true}
+              onRequestClose={() => setVisibleModal(false)}  
+            >
+              <SafeAreaView style={styles.containerModal}>
+
+                <View style={styles.containerProgressBar}>
+                  <Progress.Circle progress={progressBar===0 ? 0 : progressBar } indeterminate={false} size={200} showsText={true} textStyle={{fontSize: 25, color: '#d6e9ff'}} color={'#d6e9ff'}/>
+                </View>
+
+                <TouchableOpacity style={styles.buttonModal} onPressIn={() => setVisibleModal(false) + navigation.navigate('Perfil')} disabled={progressBar === 100 ? false : true}>
+                  <Text style={styles.buttonTextModal}>Concluir</Text>
+                </TouchableOpacity>
+              </SafeAreaView>
+            </Modal>
+
             <View style={styles.containerBtnExit}>
             <TouchableOpacity style={styles.btnExit} onPress={LogOut}>
               <Ionicons name="exit-outline" size={28} color="white" style={styles.iconBtnExit}/>
@@ -540,13 +709,84 @@ const styles=StyleSheet.create({
     backgroundColor: "#2C8AD8",
   },
 
+  containerBio:{
+    paddingBottom: 30,
+    marginLeft: 10,
+    marginRight: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: "10%"
+  },
+
+
+
   containerHeader:{
-    paddingStart: '5%',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: "center",
     flexDirection: 'row', 
     width: '100%',
-    height: 80,
+    height: "5%",
+  },
+
+  containerModal:{
+    height: '100%',
+    width:'100%',
+    justifyContent:'center',
+    alignItems: 'center',
+    backgroundColor: '#000202CF',
+    alignContent:'center',
+  },
+
+  buttonModal:{
+    backgroundColor:"#d6e9ff",
+    width: '80%',
+    alignSelf: 'center',
+    borderRadius: 50,
+    paddingVertical: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:'-18%'
+  },
+
+  buttonTextModal:{
+    color: "#5A6687",
+    fontSize: 15,
+    fontWeight: 'bold', 
+  },
+
+  
+  textArea:{
+    padding: 5,
+    textAlign: 'justify',
+    fontSize: 18,
+    textAlignVertical: 'top',
+
+  },
+
+  cor:{
+    marginTop: 10,
+    height: 90,
+    padding: 5,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderRadius: 25,
+    borderColor: "#A2ACC3",
+    width: '90%',
+    alignSelf: 'center',
+    marginLeft: 10
+  },
+
+  containerProgressBar:{
+    width:'90%',
+    justifyContent:'center',
+    alignItems: 'center'
+  },
+
+  progressBar:{
+    marginTop: 10,
+    height: 30,
+    width: '100%'
   },
 
   containerInfoProfile:{
@@ -557,27 +797,34 @@ const styles=StyleSheet.create({
     borderTopRightRadius: 25,
   },
 
+  containerMessage:{
+    marginTop: 28,
+    marginBottom: '8%',
+
+  },
+
   message:{
-    marginTop: 25,
+
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: '8%',
+
   },
 
   iconVoltar:{
     marginTop: 10,
-    marginRight: 15,
-    height: 30,
-    width: 30,
+    marginRight: 10,
+    height: "50%",
+    width: "10%",
+
   },
 
   iconConfirmar:{
     marginTop: 10,
-    marginRight: 20,
     marginLeft: 120,
-    height: 30,
-    width: 20,
+    height: "50%",
+    width: "10%",
+
   },
 
   containerText:{
@@ -588,7 +835,7 @@ const styles=StyleSheet.create({
   text:{
     fontSize:18,
     fontWeight:'bold',
-
+    color: "#5A6687"
   },
 
   backgroundImage:{
@@ -621,7 +868,7 @@ const styles=StyleSheet.create({
   infoText:{
     fontSize: 15, 
     fontWeight: 'bold',
-    color: 'gray',
+    color: '#A2ACC3',
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -662,7 +909,6 @@ const styles=StyleSheet.create({
   },
 
   btnExit:{
-
     alignSelf: 'center', 
     alignItems: 'center',
     flexDirection: 'row', 
@@ -677,6 +923,5 @@ const styles=StyleSheet.create({
     alignSelf: 'center',
     backgroundColor:"#FF0000",
     marginBottom: 30,
-
   }
 });

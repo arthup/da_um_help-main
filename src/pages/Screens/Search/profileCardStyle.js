@@ -1,21 +1,8 @@
 import { styled } from 'styled-components';
 
-export const Container = styled.View`
-    flex: 1;
-    align-items: center;
-    background-color: #d0dde2;
-    padding: 20px;
-`;
-
-export const Container2 = styled.View`
-    flex: 1;
-    align-items: center;
-    background-color: #d0dde2;
-    padding: 0px 20px 0px 20px;
-`;
-
 export const Card = styled.View`
-    background-color:  #d0dde2;
+    margin-top: 2px;
+    background-color:  #F2F3FA;
     width: 100%;
     border-radius: 15px;
     
@@ -28,8 +15,8 @@ export const UserInfo = styled.View`
 `;
 
 export const UserImg = styled.Image`
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 25px;
 `;
 

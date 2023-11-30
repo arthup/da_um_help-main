@@ -35,8 +35,9 @@ export const CardAvaliation = styled.View`
     background-color: #f8f8f8;
     width: 100%;
     margin-bottom: 20px;
-    border-radius: 10px;
-    border-color: yellow
+    border-radius: 20px;
+    border-color: #ffd700;
+    border-width: 2px;
 `;
 
 export const UserInfo = styled.View`

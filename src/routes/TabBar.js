@@ -6,34 +6,10 @@ import NewPost from '../pages/Screens/NewPost/index';
 import Profile from '../pages/Screens/Profile/index';
 import Search from '../pages/Screens/Search/index';
 import React, { useState, useRef } from 'react';
-import Diarista from '../pages/Screens/Home/diarista';
 import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons'; 
 
 const Tab = createBottomTabNavigator();
 
-
-const icone = ({item}) =>{
-    const [visibleModal, setVisibleModal] = useState(false);
-    return  (
-        <View>
-            <TouchableOpacity  onPress={() => setVisibleModal(true)}>
-                <Ionicons name="md-reorder-three-outline" size={36} color="white" style={{marginRight:10}}/>
-            </TouchableOpacity>
-
-            <Modal
-                animationType='fade'
-                visible={visibleModal}
-                transparent={true}
-                onRequestClose={() => setVisibleModal(false)}  
-            >
-                <Diarista
-                    handleClose={()=> setVisibleModal(false)}
-                    handleOpen={'1'}
-                    />
-            </Modal>
-        </View>
-        )
-}
 export default function Routes(){
 
     return(
@@ -57,22 +33,17 @@ export default function Routes(){
             <Tab.Screen
                 name="Dá um Help!" 
                 component={Home}
-                
                 options={{ 
                     headerShown: false,
-                    headerRight:icone,
                     tabBarLabel:'',
                     headerStyle: {backgroundColor:'#2C8AD8'},
                     headerTintColor: 'white',
-                    
-                
                     tabBarIcon:({size, color}) =>(
                         <Entypo name="home" size={size} color={color} />
                     )
                 }}
             />
 
-                
             <Tab.Screen
                 name="Pesquisa"
                 component={Search}

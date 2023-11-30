@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, TouchableWithoutFeedback, Keyboard , KeyboardAvoidingView, Alert} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {auth} from '../../Services/firebaseConfig';
+import { auth } from '../../Services/firebaseConfig';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 export default function LoginIn(){
@@ -26,68 +26,80 @@ export default function LoginIn(){
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage)
+            if(errorCode=='auth/wrong-password'){
+                Alert.alert('Senha Incorreta')
+            } else if(errorCode=='auth/user-not-found'){
+                Alert.alert('Usuário não encontrado')
+            }
+            else if(errorCode=='auth/invalid-email'){
+                Alert.alert('Usuário não cadastrado')
+            }
         })
     }
 
     return(
-         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
-                <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-                    <Text style={styles.message}>Faça Login!</Text>
-                </Animatable.View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+            <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
+                <Text style={styles.message}>Faça Login!</Text>
+            </Animatable.View>
 
-                <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-                    {error == true && email==="" ? <Text style={styles.warningMessage}>Campo Obrigatório*</Text> : <Text style={styles.warningMessage}/>}
+            <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+                {error == true && email==="" ? <Text style={styles.warningMessage}>Campo Obrigatório*</Text> : <Text style={styles.warningMessage}/>}
+                    <TextInput
+                        placeholder='Email'
+                        placeholderTextColor={"#A2ACC3"}
+                        style={styles.inputEmail}
+                        value={email}
+                        onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
+                    />
+
+                {error == true && password==="" ? <Text style={styles.warningMessage}>Campo Obrigatório*</Text> : <Text style={styles.warningMessage}/>}
+                    <View style={styles.textInputPassword}>
                         <TextInput
-                            placeholder='Email'
-                            style={styles.inputEmail}
-                            value={email}
-                            onChangeText={(text) => setEmail(text) && (error == false && email ==="")}
+                            placeholder='Senha'
+                            placeholderTextColor={"#A2ACC3"}
+                            style={styles.inputPassword}
+                            value={password}
+                            onChangeText={(text) => setPassword(text) && (error == false && password ==="")}
+                            secureTextEntry={passHide}
                         />
 
-                    {error == true && password==="" ? <Text style={styles.warningMessage}>Campo Obrigatório*</Text> : <Text style={styles.warningMessage}/>}
-                        <View style={styles.textInputPassword}>
-                            <TextInput
-                                placeholder='Senha'
-                                style={styles.inputPassword}
-                                value={password}
-                                onChangeText={(text) => setPassword(text) && (error == false && password ==="")}
-                                secureTextEntry={passHide}
-                            />
+                        <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
+                            <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
+                        </TouchableOpacity> 
+                    </View>
 
-                            <TouchableOpacity  onPress={() => setpassHide(!passHide)}>
-                                <FontAwesome5 name={passHide ? 'eye' : 'eye-slash'} size={20} color="#A2ACC3"/>
-                            </TouchableOpacity> 
-                        </View>
+                    <View style={styles.space}/>
 
-                        <View style={styles.space}></View>
-
-                    { email === "" || password === ""
-                        ? 
+                    <KeyboardAvoidingView behavior="position" enabled>
+                        { email === "" || password === "" ? 
+                        
                             <TouchableOpacity 
-                            style={styles.buttonEnter}
-                            onPress={() => setError(true)}
+                                style={styles.buttonEnter}
+                                onPress={() => setError(true)}
                             >
                                 <Text style={styles.buttonEnterText}>Entrar</Text>
                             </TouchableOpacity>
                         :
                             <TouchableOpacity 
-                            style={styles.buttonEnter}
-                            onPress={handleLogin}
+                                style={styles.buttonEnter}
+                                onPress={handleLogin}
                             >
                                 <Text style={styles.buttonEnterText}>Entrar</Text>
                             </TouchableOpacity>
                     }
                     
-                    <TouchableOpacity style={styles.buttonRegister} onPress={() => (navigation.navigate('SignIn'))}>
-                        <Text style={styles.buttonRegisterText}>Ainda não possui uma conta?</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonRegister} onPress={() => (navigation.navigate('SignIn'))}>
+                            <Text style={styles.buttonRegisterText}>Ainda não possui uma conta?</Text>
+                        </TouchableOpacity>
+                    </KeyboardAvoidingView>
                 </Animatable.View>
             </SafeAreaView>
         </TouchableWithoutFeedback> 
     )
 };
- 
+
 const styles = StyleSheet.create({
     container:{
         flex:2,
@@ -118,14 +130,14 @@ const styles = StyleSheet.create({
     inputEmail:{
         borderBottomWidth: 1,
         height: 40,
-        marginBottom: 12,
+        marginBottom: "3%",
         fontSize: 16,
     },
 
     inputPassword:{
         borderBottomWidth: 1,
         height: 40,
-        marginBottom: 12,
+        marginBottom: "3%",
         fontSize: 16,
         borderWidth: 0,
         position: 'absolute',
@@ -175,5 +187,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center',
-     },
+    },
 })

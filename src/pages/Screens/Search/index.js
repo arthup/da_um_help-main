@@ -1,123 +1,103 @@
-import React, { Component, useState, useEffect } from "react";
-import {View, StyleSheet, TextInput,  FlatList, Text, ScrollView, TouchableOpacity, Image, StatusBar,  Keyboard, TouchableWithoutFeedback} from "react-native";
+import React, { useState, useEffect } from "react";
+import {View, StyleSheet, TextInput,  FlatList, ScrollView, TouchableOpacity, StatusBar,  Keyboard, TouchableWithoutFeedback} from "react-native";
 import { FontAwesome5 } from '@expo/vector-icons';
-import { PostCard } from '../Home/PostCard';
 import { ProfileCard } from './ProfileCard'
-import { Container } from "./profileCardStyle";
-import { auth, db } from '../../../Services/firebaseConfig';
-import { collection, getDocs, query, where, orderBy, and} from "firebase/firestore";
-import { get, equalTo} from 'firebase/database'
+import { db } from '../../../Services/firebaseConfig';
+import { collection, getDocs, query, orderBy} from "firebase/firestore";
 
 const Search = () =>{
-
   const [search, setSearch] = useState(''); 
-  const [filteredData, setFilteredData] = useState([]); 
-  const [masterData, setMasterData] = useState([]);
   const list = [];
-  const [posts, setPosts]=useState('');
+  const [masterData, setMasterData] = useState([]);
+  const [filteredData, setFilteredData] = useState('');
 
-  function renderItem({ item } ) {
-    return <ProfileCard item={item}/>
-  }
-
-
+  function renderItem({ item }) {return <ProfileCard item={item}/>}
 
   const getUserInfo = async () => {
-    if(search === ''){
-      undefined
-     console.log(list)
-     console.log('nada')
-     list.slice(0,undefined)
-    } else {
-      try{
-
-        const q = query(collection(db, "users"), where('nameSearch', '==', search.toUpperCase().trim()));
-        const querySnapshot = await getDocs(q);
+    try{
+      const q = query(collection(db, "users"), orderBy('name','asc'));
+      const querySnapshot = await getDocs(q);
   
-        querySnapshot.forEach((doc) => {
-          const {comments, likes, post, postImage, postTime, userId, name, userImg, nameSearch, timeStamp}  = doc.data();
+      querySnapshot.forEach((doc) => {
+        const { userId, name, userImg, nameSearch, cidade, estado}  = doc.data();
           list.push({ 
             name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
             userId,
             userImg,
             nameSearch,
+            cidade,
+            estado,
             id: doc.id
           });
-          setPosts(list);
-          console.log(list)
-     
+          setMasterData(list);
+          setFilteredData(list);
         });
-      } catch(e){
-        console.log(e)}
-        console.log(search)
-    
-  }}
+      }catch(e){
+        console.log(e)
+      }  
+}
+console.log(filteredData)
+useEffect(() => {
+  getUserInfo()   
+}, []);
 
-  // useEffect(() => {
-
-  //   getUserInfo()
-    
-
-  // }, []);
-
-  const footer = () => {
-    return (
-      <View style={styles.headerStyle}>
-        <Text style={styles.titleStyle}>This is the footer</Text>
-      </View>
-    );
+  const searchFilter = (text) => {
+    if (text) {
+      const newData = masterData.sort(function(a, b) {
+        if(a.name < b.name) {
+          return -1;
+        } else {
+          return true;
+        }
+      }).filter(
+        function (item) {
+          if (item.nameSearch){
+            const itemData = item.nameSearch;
+            const textData = text.toUpperCase();
+            return itemData.indexOf(textData) > -1;
+          }
+      });
+      setFilteredData(newData);
+    } else {
+      setFilteredData(masterData);
+    }
+    setSearch(text);
   };
-  
-
- 
-
 
   return (
 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView>
-    <View style={styles.container}>
-      <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
+        <View style={styles.container}>
+          <StatusBar backgroundColor="#2C8AD8" barStyle="ligth-content"/>
 
-      <View style={styles.containerHeader}> 
-        <View style={styles.search}>
-          <TouchableOpacity onPress={ search.trim() &&getUserInfo}>
-            <FontAwesome5 name="search" size={26} style={styles.iconPesquisa}/> 
-          </TouchableOpacity>
-            
-          <TextInput
-            placeholder='Pesquisar'
-            style={styles.barSearch}
-            onChangeText={(text) => setSearch(text)}
-            value={search}
-          />
+          <View style={styles.containerHeader}> 
+            <View style={styles.search}>
+              <TouchableOpacity>
+                <FontAwesome5 name="search" size={26} style={styles.iconPesquisa}/> 
+              </TouchableOpacity>
+                
+                <TextInput
+                  placeholder='Pesquisar'
+                  style={styles.barSearch}
+                  onChangeText={(text) => searchFilter(text)}
+                  value={search}
+                />
+            </View>
+          </View>
+
+          <View style={styles.containerResults}> 
+            <FlatList
+              data={filteredData}
+              scrollEnabled={false}
+              keyExtractor={item => item.id}
+              renderItem={renderItem}
+              style={{width: "100%", height: '100%'}}
+            />
+          </View>
         </View>
-
-
-      </View>
-      <View style={styles.containerResults}> 
-
-      {list == [] ? <View/> :
-      <FlatList
-           data={posts}
-           scrollEnabled={false}
-           keyExtractor={item => item.id}
-           renderItem={renderItem}
-          
-           style={{width: "100%", height: '100%'}}
-         />
-      }
-      </View>
-
-
-    </View>
-    </ScrollView>
-  </TouchableWithoutFeedback>
+      </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
 

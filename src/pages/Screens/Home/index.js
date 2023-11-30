@@ -5,30 +5,20 @@ import { PostCard } from './PostCard.js';
 import { collection, getDocs, orderBy, query, where} from "firebase/firestore";
 import { db } from '../../../Services/firebaseConfig';
 import { useBackHandler } from '@react-native-community/hooks';
-import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons'; 
-
+import { Ionicons } from '@expo/vector-icons'; 
 
 export const Home = () => {
   const [posts, setPosts]=useState('');
-  const [users, setUsers]=useState('');
   const list = [];
-  const [todos, setTodos] = useState(true);
-  const [diarista, setDiarista] = useState(false);
-  const [eletricista, setEletricista] = useState(false);
-  const [pedreiro, setPedreiro] = useState(false);
-  const [pintor, setPintor] = useState(false);
-  const [montador, setMontador] = useState(false);
-  const [outros, setOutros] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [filter, setFilter] = useState('');
-
 
   useBackHandler(() =>{
     if(1 == 1){
       return true
     }
   });
- 
+
   const getPosts = async () => {
     if(filter===''){    
       try{
@@ -36,8 +26,7 @@ export const Home = () => {
         const querySnapshot = await getDocs(q);
         
         querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
+          const { comments, likes, post, postImage, postTime, userId, name, userImg, rating,orderTime, postType } = doc.data();
           list.push({ 
             name,
             comments, 
@@ -48,25 +37,22 @@ export const Home = () => {
             userId,
             userImg,
             orderTime,
+            rating,
             postType,
             id: doc.id
-
           });
           setPosts(list);
         });
-
       } catch(e){
           console.log(e)
       }
-    } else if(filter=== 'Diarista'){
+    } else{
       try{
-
         const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
         const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
 
+        querySnapshot.forEach((doc) => {
+          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, rating,postType } = doc.data();
           list.push({ 
             name,
             comments, 
@@ -75,176 +61,18 @@ export const Home = () => {
             postImage, 
             postTime, 
             userId,
+            rating,
             userImg,
             orderTime,
             postType,
             id: doc.id
-
           });
-          
           setPosts(list);
-          
         });
-
       } catch(e){
           console.log(e)
       }
-    } else if(filter=== 'Eletricista'){
-      try{
-
-        const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
-          list.push({ 
-            name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
-            userId,
-            userImg,
-            orderTime,
-            postType,
-            id: doc.id
-
-          });
-          
-          setPosts(list);
-          
-        });
-
-      } catch(e){
-          console.log(e)
-      }
-    } else if(filter=== 'Pedreiro'){
-      try{
-
-        const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
-          list.push({ 
-            name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
-            userId,
-            userImg,
-            orderTime,
-            postType,
-            id: doc.id
-
-          });
-          
-          setPosts(list);
-          
-        });
-
-      } catch(e){
-          console.log(e)
-      }
-    } else if(filter=== 'Pintor'){
-      try{
-
-        const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
-          list.push({ 
-            name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
-            userId,
-            userImg,
-            orderTime,
-            postType,
-            id: doc.id
-
-          });
-          
-          setPosts(list);
-          
-        });
-
-      } catch(e){
-          console.log(e)
-      }
-    } else if(filter=== 'Montador'){
-      try{
-
-        const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
-          list.push({ 
-            name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
-            userId,
-            userImg,
-            orderTime,
-            postType,
-            id: doc.id
-
-          });
-          
-          setPosts(list);
-          
-        });
-
-      } catch(e){
-          console.log(e)
-      }
-    } else if(filter=== 'Outros'){
-      try{
-
-        const q = query(collection(db, 'posts'), where('postType', '==', filter), orderBy('orderTime', 'desc'))
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          const { comments, likes, post, postImage, postTime, userId, name, userImg, orderTime, postType } = doc.data();
-
-          list.push({ 
-            name,
-            comments, 
-            likes, 
-            post, 
-            postImage, 
-            postTime, 
-            userId,
-            userImg,
-            orderTime,
-            postType,
-            id: doc.id
-
-          });
-          
-          setPosts(list);
-          
-        });
-
-      } catch(e){
-          console.log(e)
-      }
-    }
+    } 
   }
 
   useEffect(() => {
@@ -256,90 +84,93 @@ export const Home = () => {
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(()=>{
- 
       getPosts(...posts)   
       }, 2000)
-   setRefreshing(false);
+  setRefreshing(false);
   };
 
 
-  function renderItem({ item } ) {
-    return <PostCard item={item}/>
+  function renderItem({ item } ) { return <PostCard item={item}/> }
 
-  }
   const Diarista = ({handleClose, handleOpen}) => {
 
-    const controller = () =>{
-      handleClose()
+    const controller = (teste) =>{
       onRefresh()
+      handleClose()
     }
-
-
 
   const cor = StyleSheet.create({
     btnWorksSelect:{
       margin: 5,
       width: '70%',
-      height: '10%',
+      height: '9%',
       padding: 8,
-      borderRadius: 10,
+      borderRadius: 15,
       justifyContent:'center',
       alignItems:'center',
       alignContent:'center',
       borderWidth: 0.8,
-      borderColor: "#fff",
-      backgroundColor: '#2C8AD8' 
+      borderColor: "#2C8AD8",
+      backgroundColor: "#2C8AD8"
     },
 
     btnWorks:{
       margin: 5,
       width: '70%',
-      height: '10%',
+      height: '9%',
       padding: 8,
-      borderRadius: 10,
+      borderRadius: 15,
       justifyContent:'center',
       alignItems:'center',
       alignContent:'center',
       borderWidth: 0.8,
-      borderColor: "#fff",
+      borderColor: '#8BD7F3',
+      backgroundColor: "#8BDDF351"
     },
-   
   });
 
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}> 
           <View style={styles.containerTxt}>
-            <Text style={styles.txt}>Filtrar Publicações por profissões: </Text>
+            <Text style={styles.txt}>Filtre as publicações pela profissão: </Text>
           </View>
   
           <View style={styles.containerButton}>
-            <TouchableOpacity style={todos ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('') + setTodos(true) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='' ? cor.btnWorksSelect : cor.btnWorks} onPress={() => setFilter('')} > 
               <Text style={styles.txtBtnWorks}>Todos</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={diarista ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Diarista') + setTodos(false) + setDiarista(true) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='Diarista'  ? cor.btnWorksSelect : cor.btnWorks} onPress={() =>(setFilter('Diarista'))}> 
               <Text style={styles.txtBtnWorks}>Diarista</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={eletricista ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Eletricita') + setTodos(false) + setDiarista(false) + setEletricista(true) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='Eletricista' ? cor.btnWorksSelect : cor.btnWorks} onPress={() => (setFilter('Eletricista'))}> 
               <Text style={styles.txtBtnWorks}>Eletricista</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={pedreiro ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Pedreiro') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(true) + setPintor(false) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='Pedreiro' ? cor.btnWorksSelect : cor.btnWorks} onPress={() => (setFilter('Pedreiro'))}> 
               <Text style={styles.txtBtnWorks}>Pedreiro</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={pintor ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() => (setFilter('Pintor') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(true) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='Pintor' ? cor.btnWorksSelect : cor.btnWorks} onPress={()=> setFilter('Pintor')}> 
               <Text style={styles.txtBtnWorks}>Pintor</Text>
             </TouchableOpacity>
   
-            <TouchableOpacity style={montador ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() =>(setFilter('Montador') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(false) + setPedreiro(false) + setPintor(false) + setMontador(true))}> 
+            <TouchableOpacity style={filter==='Montador' ? cor.btnWorksSelect : cor.btnWorks} onPress={() =>(setFilter('Montador'))}> 
               <Text style={styles.txtBtnWorks}>Montador</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={outros ? cor.btnWorksSelect : cor.btnWorks} onPress={controller} onPressIn={() =>(setFilter('Outros') + setTodos(false) + setDiarista(false) + setEletricista(false) + setOutros(true) + setPedreiro(false) + setPintor(false) + setMontador(false))}> 
+            <TouchableOpacity style={filter==='Outros' ? cor.btnWorksSelect : cor.btnWorks} onPressIn={() =>(setFilter('Outros'))}> 
               <Text style={styles.txtBtnWorks}>Outros</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={filter==='Avaliação' ? cor.btnWorksSelect : cor.btnWorks} onPressIn={() =>(setFilter('Avaliação'))}> 
+              <Text style={styles.txtBtnWorks}>Avaliações</Text>
+            </TouchableOpacity>
+
+
+            <TouchableOpacity style={{height:"12%", justifyContent: "center"}} onPress={controller}> 
+              <Text style={{fontSize: 20, fontWeight:'bold', color: "#fff"}}>Confirmar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
@@ -347,7 +178,6 @@ export const Home = () => {
   }
 
   return (
-
     <Container>
       <View style={styles.containerHeader}>
 
@@ -366,17 +196,12 @@ export const Home = () => {
               transparent={true}
               onRequestClose={() => setVisibleModal(false)}  
             >
-
               <Diarista
                 handleClose={()=> setVisibleModal(false)}
-                handleOpen={'1'}
               />
             </Modal>
-        </View>
-          
+          </View>
       </View>
-
-   
 
       <FlatList
           data={posts}
@@ -385,10 +210,7 @@ export const Home = () => {
           initialNumToRender={3}
           showsVerticalScrollIndicator={false}
           style={{width: "105%", marginTop: '19%'}}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          refreshing={refreshing} 
+          refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> } refreshing={refreshing} 
         />
     </Container>
   );
@@ -399,6 +221,7 @@ export default Home;
 const styles = StyleSheet.create({
   container:{
     flex: 1,
+    backgroundColor: "#000202E3"
   },
 
   textHeader:{
@@ -422,16 +245,14 @@ const styles = StyleSheet.create({
 
   content:{
     zIndex: 99,
-    backgroundColor: "#8BD7F3",
     borderRadius: 20,
-    marginTop: 120,
+    marginTop: 70,
     padding: 8,
-    borderWidth: 0.5,
-    borderColor: '#2C8AD8',
+
     justifyContent: 'center',
     alignSelf: 'center',
     width: '95%',
-    height:'70%',
+    height:'85%',
     position:'absolute',
     top:1
   },
@@ -439,11 +260,12 @@ const styles = StyleSheet.create({
   containerTxt:{
     alignItems:'center',
     justifyContent:'center',
-    padding: 15
+    marginBottom: "6%",
+    width: "100%",
   },
 
   txt:{
-    fontSize:18,
+    fontSize:20,
     fontWeight:'bold',
     color: "#fff",
   },
@@ -457,7 +279,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight:'bold',
     color: "#fff",
-
   },
-
 });

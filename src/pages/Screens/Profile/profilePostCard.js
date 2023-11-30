@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AntDesign, FontAwesome, Entypo } from '@expo/vector-icons'; 
-import { Card, CardWork, CardAvaliation, UserInfo, UserImg, UserInfoText, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from './profileFeedStyle';
-import { TouchableOpacity, View, Modal,Text } from 'react-native'; 
+import { Card, CardWork, CardAvaliation, UserInfo, UserImg, UserInfoText, UserInfoText2, UserName, PostTime, PostImage, PostText, Interaction, InteractionText, InteractionWrapper, Divider } from './profileFeedStyle';
+import { TouchableOpacity, View, Modal, Text, Image } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../../Services/firebaseConfig';
 import { MenuPopUp } from './menuPopUp'
-import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import CommentsPopUp from '../Home/commentsPopUp';
 
 export const ProfilePostCard = ({item}) => {
   const [like, setLike] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleModal2, setVisibleModal2] = useState(false);
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [userImg, setUserImg] = useState('');
@@ -35,7 +37,6 @@ export const ProfilePostCard = ({item}) => {
       console.log(e)}
   }
 
- 
   useEffect(() => {
     getDoc()
   }, []);
@@ -48,139 +49,91 @@ export const ProfilePostCard = ({item}) => {
     }
   }
 
+  console.log("aa",item)
 
-  if (item.name ===''){
+  if (item.post ===''){
     undefined
   } else {
-
     if(item.postType === 'Avaliação'){
-      <CardAvaliation>
-          <UserInfo>
-            <UserImg source={{uri: userImg ? userImg : null}}/>
-            <UserInfoText>
-                <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
-                    <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
-                        <UserName>{item.name}</UserName>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={{marginLeft:'90%', position: 'absolute'}} onPress={() => setVisibleModal(true)}>
-                      <Entypo name="dots-three-vertical" size={18} color="black" />
-                    </TouchableOpacity>
-
-                    <Modal
-                      animationType='fade'
-                      visible={visibleModal}
-                      transparent={true}
-                      onRequestClose={() => setVisibleModal(false)}  
-                    >
-                      <MenuPopUp
-                        handleClose={()=> setVisibleModal(false)}
-                        handleOpen={item}
-                      />
-                    </Modal>
-
-                </View>
-              <PostTime>{item.postTime}</PostTime>
-            </UserInfoText>
-          </UserInfo>
-  
-          <PostText>{item.post}</PostText>
-          {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
-          
-          <InteractionWrapper>
-            <Interaction onPress={pressLike}>
-              <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={27} color='#242E4E'/>
-              <InteractionText>Curtir</InteractionText>
-            </Interaction>
-  
-            <Interaction >
-              <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
-              <InteractionText>Comentarios</InteractionText>
-            </Interaction>
-          </InteractionWrapper>
-        </CardAvaliation>
-    }
-    else if(item.postType !== 'Cliente'){
       return(
-      <CardWork>
-          <UserInfo>
+      <CardAvaliation>
+        <UserInfo>
+
+          <TouchableOpacity onPress={()=>( item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)  )}>
             <UserImg source={{uri: userImg ? userImg : null}}/>
-            <UserInfoText>
-                <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
-                    <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
-                        <UserName>{name}</UserName>
-                    </TouchableOpacity>
+          </TouchableOpacity>
 
-                    <TouchableOpacity style={{marginLeft:'90%', position: 'absolute'}} onPress={() => setVisibleModal(true)}>
-                      <Entypo name="dots-three-vertical" size={18} color="black" />
-                    </TouchableOpacity>
+          <UserInfoText2>
+            <TouchableOpacity onPress={()=>( item.name === user.displayName ? navigation.navigate('Perfil') : navigation.navigate('userProfile', item)   )}><UserName>{name}</UserName></TouchableOpacity>
+            <PostTime>{item.postTime}</PostTime>
+          </UserInfoText2>
 
-                    <Modal
-
-                    animationType='fade'
-              
-                      visible={visibleModal}
-                      transparent={true}
-                      onRequestClose={() => setVisibleModal(false)}  
-                    >
-                      <MenuPopUp
-                        handleClose={()=> setVisibleModal(false)}
-                        handleOpen={ item}
-                      />
-                    </Modal>
-
-                </View>
-              <PostTime>{item.postTime}</PostTime>
-            </UserInfoText>
-          </UserInfo>
-  
-          <PostText>{item.post}</PostText>
-          {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
-          
-          <InteractionWrapper>
-            <Interaction onPress={pressLike}>
-              <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={27} color='#242E4E'/>
-              <InteractionText>Curtir</InteractionText>
-            </Interaction>
-  
-            <Interaction >
-              <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
-              <InteractionText>Comentarios</InteractionText>
-            </Interaction>
-          </InteractionWrapper>
-        </CardWork>
+          <View style={{justifyContent: "center", height: "50%", flexDirection: "row", alignItems: "center", marginLeft: "27%"}}>
+            <Image source={require('../../../assets/star_cheia.png')} style={{  width: "23%", height: "70%"}}/>
+            <Text style={{fontSize: 15, fontWeight: "bold", color: "#A2ACC3", marginLeft: 5}}>{item.rating}</Text>
+          </View>
+        </UserInfo>
         
-        )
+        <PostText>{item.post}</PostText>
+        {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
+        
+        <InteractionWrapper>
+          <Interaction onPress={pressLike}>
+            <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={25} color='#242E4E'/>
+            <InteractionText>Curtir</InteractionText>
+          </Interaction>
+
+          <Interaction onPress={() => setVisibleModal2(true)}>
+
+            <FontAwesome style={{bottom: -3}} name='comment' size={25} color='#242E4E'/>
+            <InteractionText>Comentarios</InteractionText>
+
+            <Modal
+              animationType='slide'
+              visible={visibleModal2}
+              transparent={true}
+              onRequestClose={() => setVisibleModal2(false)}  
+            >
+              <CommentsPopUp
+                handleClose={()=> setVisibleModal2(false)}
+                handleOpen={'1'}
+            />
+            </Modal>
+          </Interaction>
+        </InteractionWrapper>
+      </CardAvaliation>
+      )
     }else{
     return (
-      <Card>
+      <View>
+    { item.postType=='Cliente' ? 
+    <Card>
       <UserInfo>
         <UserImg source={{uri: userImg ? userImg : null}}/>
         <UserInfoText>
-            <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
-                <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
-                    <UserName>{name}</UserName>
-                </TouchableOpacity>
+          <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
 
-                <TouchableOpacity style={{marginLeft:'90%', position: 'absolute'}} onPress={() => setVisibleModal(true)}>
-                  <Entypo name="dots-three-vertical" size={18} color="black" />
-                </TouchableOpacity>
+            <TouchableOpacity onPress={()=>(navigation.navigate('userProfile', item))}>
+              <UserName>{name}</UserName>
+            </TouchableOpacity>
 
-                <Modal
+            <TouchableOpacity style={{marginLeft:'90%', position: 'absolute'}} onPress={() => setVisibleModal(true)}>
+              <Entypo name="dots-three-vertical" size={18} color="black" />
+            </TouchableOpacity>
+            
+            <Modal
+              animationType='fade'
+              visible={visibleModal}
+              transparent={true}
+              onRequestClose={() => setVisibleModal(false)}  
+            >
+              <MenuPopUp
+                handleClose={()=> setVisibleModal(false)}
+                handleOpen={ item}
+              />
+            </Modal>
 
-                animationType='fade'
-          
-                  visible={visibleModal}
-                  transparent={true}
-                  onRequestClose={() => setVisibleModal(false)}  
-                >
-                  <MenuPopUp
-                    handleClose={()=> setVisibleModal(false)}
-                    handleOpen={ item}
-                  />
-                </Modal>
-
-            </View>
+          </View>
           <PostTime>{item.postTime}</PostTime>
         </UserInfoText>
       </UserInfo>
@@ -194,11 +147,116 @@ export const ProfilePostCard = ({item}) => {
           <InteractionText>Curtir</InteractionText>
         </Interaction>
 
-        <Interaction >
+        <Interaction onPress={() => setVisibleModal2(true)}>
           <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
           <InteractionText>Comentarios</InteractionText>
         </Interaction>
+
+        <Modal
+          animationType='slide'
+          visible={visibleModal2}
+          transparent={true}
+          onRequestClose={() => setVisibleModal2(false)}  
+        >
+          <CommentsPopUp
+            handleClose={()=> setVisibleModal2(false)}
+            handleOpen={'1'}
+          />
+        </Modal>
       </InteractionWrapper>
     </Card>
+    :
+    <CardWork>  
+      <UserInfo>
+        <UserImg source={{uri: userImg ? userImg : null}}/>
+        <UserInfoText>
+          <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
+            <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
+              <UserName>{name}</UserName>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{marginLeft:'90%', position: 'absolute'}} onPress={() => setVisibleModal(true)}>
+              <Entypo name="dots-three-vertical" size={18} color="black" />
+            </TouchableOpacity>
+            
+            <Modal
+              animationType='fade'
+              visible={visibleModal}
+              transparent={true}
+              onRequestClose={() => setVisibleModal(false)}  
+            >
+              <MenuPopUp
+                handleClose={()=> setVisibleModal(false)}
+                handleOpen={ item}
+              />
+            </Modal>
+          </View>
+
+          <PostTime>{item.postTime}</PostTime>
+        </UserInfoText>
+      </UserInfo>
+
+      <PostText>{item.post}</PostText>
+      {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
+    
+      <InteractionWrapper>
+        <Interaction onPress={pressLike}>
+          <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={27} color='#242E4E'/>
+          <InteractionText>Curtir</InteractionText>
+        </Interaction>
+
+        <Interaction onPress={() => setVisibleModal2(true)}>
+          <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
+          <InteractionText>Comentarios</InteractionText>
+
+          <Modal
+            animationType='slide'
+            visible={visibleModal2}
+            transparent={true}
+            onRequestClose={() => setVisibleModal2(false)}  
+          >
+            <CommentsPopUp
+              handleClose={()=> setVisibleModal2(false)}
+              handleOpen={'1'}
+            />
+          </Modal>
+        </Interaction>
+      </InteractionWrapper>
+    </CardWork>
+    }
+  </View>
     );
-  }}}
+   }
+   //else {
+  //   <Card>
+  //     <UserInfo>
+  //       <UserImg source={{uri: userImg ? userImg : null}}/>
+  //       <UserInfoText>
+  //           <View style={{flexDirection:'row', alignContent:'center', width: '100%', position:'relative'}}>
+  //               <TouchableOpacity onPress={()=>(  navigation.navigate('userProfile', item) )}>
+  //                   <UserName>{name}</UserName>
+  //               </TouchableOpacity>
+
+  //           </View>
+  //         <PostTime>{item.postTime}</PostTime>
+  //       </UserInfoText>
+  //     </UserInfo>
+
+  //     <PostText>{item.post}</PostText>
+  //     {item.postImage !== null ? <PostImage source={{ uri: item.postImage}} /> : <Divider />}
+      
+  //     <InteractionWrapper>
+  //       <Interaction onPress={pressLike}>
+  //         <AntDesign  style={{bottom: -1}} name={like===false ?'like2' : 'like1'} size={27} color='#242E4E'/>
+  //         <InteractionText>Curtir</InteractionText>
+  //       </Interaction>
+
+  //       <Interaction >
+  //         <FontAwesome style={{bottom: -3}} name='comment' size={27} color='#242E4E'/>
+  //         <InteractionText>Comentarios</InteractionText>
+  //       </Interaction>
+  //     </InteractionWrapper>
+  //   </Card>
+  // }
+
+  }}

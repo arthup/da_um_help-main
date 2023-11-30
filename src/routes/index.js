@@ -76,8 +76,6 @@ export default function Routes(){
                 component={Avalition}
                 options={{ headerShown: false}}
             />
-      
-            
         </Stack.Navigator>
     );
 }

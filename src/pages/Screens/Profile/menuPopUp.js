@@ -1,37 +1,12 @@
-import React, { useState, useRef } from 'react';
-import { signOut, updateProfile } from "firebase/auth";
-import { auth, db } from '../../../Services/firebaseConfig';
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal, SafeAreaView, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons, Entypo } from '@expo/vector-icons';
-import { Modalize } from 'react-native-modalize';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React from 'react';
+import { db } from '../../../Services/firebaseConfig';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { doc, deleteDoc } from "firebase/firestore";
 
-
 export const MenuPopUp = ({handleClose, handleOpen}) => {
-  const user = auth.currentUser;
-  const navigation = useNavigation();
-  const [visible, setVisible]=useState(false);
-  const [userImg, setUserImg]=useState('');
-  const [name, setName]=useState('');
-  const [posts, setPosts]=useState('');
-  const listUserInfo = [];
-  const list = [];
 
-console.log(handleOpen)
   const deletPost = async () =>{
     await deleteDoc(doc(db, "posts", handleOpen.id));
-  }
-
-  const LogOut = () => {
-    signOut(auth).then(() => {
-      console.log('deslogado')
-      navigation.navigate('Welcome')
-    }).catch((error) => {
-    })
   }
 
   return (
@@ -59,24 +34,32 @@ export default MenuPopUp;
 
 const styles = StyleSheet.create({
   container:{
-    flex: 1,
-    marginTop: 500,
+    // height: "100%",
+    // flex: 1,
+    // marginTop: 500,
+    // backgroundColor: "#00000254"
+
+    width: '100%',
+    height: '100%',
+    backgroundColor: "#000002A3"
   },
 
   content:{
     zIndex: 99,
     backgroundColor: '#fff',
-    borderRadius: 6,
-    marginTop: 8,
+    borderRadius: 20,
+    marginTop: "145%",
     padding: 8,
     borderWidth: 0.5,
-    justifyContent: 'center',
+
     height: '100%'
   },
   containerTxt:{
     alignItems:'center',
     justifyContent:'center',
-    padding: 20
+    padding: 20,
+    marginTop: 20,
+    marginBottom: 20
   },
 
   txt:{
@@ -86,11 +69,9 @@ const styles = StyleSheet.create({
 
   containerButton:{
     flexDirection: 'row',
-    justifyContent:'space-between',
-    marginTop: 20,
+    justifyContent: "space-around",
     marginLeft: 50,
     marginRight: 50,
-    alignItems: 'center'
   },
 
   txtBtnConfirm:{
@@ -101,10 +82,10 @@ const styles = StyleSheet.create({
   },
   btnConfirm:{
     backgroundColor:'red',
-    width: '30%',
-    height: '60%',
+    width: '40%',
+    height: '30%',
     padding: 8,
-    borderRadius: 10,
+    borderRadius: 50,
     justifyContent:'center',
     alignItems:'center',
     alignContent:'center'
@@ -113,10 +94,8 @@ const styles = StyleSheet.create({
   btnCancel:{
     padding: 8,
     borderRadius: 10,
-    justifyContent:'center',
     alignItems:'center',
     alignContent:'center',
-    
   },
 
   txtBtnCancel:{
@@ -124,6 +103,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight:'bold'
   }
-
- 
 });

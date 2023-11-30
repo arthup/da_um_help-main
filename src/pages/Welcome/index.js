@@ -21,18 +21,20 @@ export default function Welcome(){
                 <Text style={styles.title}>Bem-Vindo!</Text>
                 <Text style={styles.text}>Um help para quem precisa!</Text>
 
-                <TouchableOpacity style={styles.buttonLogin} onPress={() => navigation.navigate('LogIn')}>
-                    <Text style={styles.buttonTextLogin}>Acessar</Text>
+                
+                <TouchableOpacity style={styles.buttonSignIn} onPress={() => navigation.navigate('SignIn')}>
+                    <Text style={styles.buttonTextSignIn}>Cadastre-se</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonSignIn} onPress={() => navigation.navigate('SignIn')}>
-                    <Text style={styles.buttonTextSignIn}>Cadastrar</Text>
+                <TouchableOpacity style={styles.buttonLogin} onPress={() => navigation.navigate('LogIn')}>
+                    <Text style={styles.buttonTextLogin}>Já possui uma conta?</Text>
                 </TouchableOpacity>
+
             </Animatable.View>
         </View>
     )
 };
- 
+
 const styles = StyleSheet. create({
     container:{
         flex: 1,
@@ -70,17 +72,6 @@ const styles = StyleSheet. create({
         marginTop: '5%',
     },
 
-    buttonLogin:{
-        position: 'absolute',
-        borderRadius: 50,
-        paddingVertical: 8,
-        width: '60%',
-        alignSelf: 'center',
-        bottom: '10%',
-        alignItems: 'center',    
-        justifyContent: 'center'
-    },
-
     buttonSignIn:{
         position: 'absolute',
         backgroundColor: "#2C8AD8",
@@ -93,15 +84,26 @@ const styles = StyleSheet. create({
         justifyContent:'center',
     },
 
-    buttonTextLogin:{
-        fontSize: 15,
-        color: "#A2ACC3",
-        fontWeight: 'bold',
-    },
-
     buttonTextSignIn:{
         fontSize: 15,
         color:"#d6e9ff",
         fontWeight:'bold',
+    },
+
+    buttonLogin:{
+        position: 'absolute',
+        borderRadius: 50,
+        paddingVertical: 8,
+        width: '60%',
+        alignSelf: 'center',
+        bottom: '10%',
+        alignItems: 'center',    
+        justifyContent: 'center'
+    },
+
+    buttonTextLogin:{
+        fontSize: 15,
+        color: "#A2ACC3",
+        fontWeight: 'bold',
     },
 });
