@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { signOut, updateProfile } from "firebase/auth";
-import {View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput, Modal, SafeAreaView} from "react-native";
+import { View, ScrollView, TouchableOpacity, Image, Text, StyleSheet, TextInput, Modal, SafeAreaView, Alert} from "react-native";
 import { auth, db, storage } from '../../../Services/firebaseConfig';
 import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { updatePassword } from "firebase/auth";
 import MaskInput, { Masks } from 'react-native-mask-input';
 import * as ImagePicker from 'expo-image-picker';
-import {ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 import * as Progress from 'react-native-progress';
 
 const EditProfile =  () => {
@@ -33,6 +34,7 @@ const EditProfile =  () => {
   const [userImg, setUserImg]=useState('');
   const [name, setName]=useState('');
   const [passHide, setpassHide] = useState(true);
+  const [erro, setErro] = useState(false);
   const navigation = useNavigation();
   const [progressBar, setProgressBar] = useState(0);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -376,12 +378,36 @@ const EditProfile =  () => {
 
   
   const Update = () =>{
+
+
+    if(senha.length < 6){
+      Alert.alert('Sua senha precisa ter no mínimo 6 caracteres')
+    } else{
+    updatePassword(user, senha).then(() => {
+      console.log('foi')
+    }).catch((error) => {
+        });
+      
+        if(visibleModal=== false){
+          navigation.navigate('Perfil')
+        }else{
+          setVisibleModal(true)
+        }}
+    try {
+      updateProfile(auth.currentUser, {
+        displayName: name
+      })
+
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+
     const Search = doc(db, "users", user.uid);
       updateDoc(Search, {
         name: name,
         nameSearch: name.toUpperCase(),
         telefone: telefone,
-        senha: senha,
+        password: senha,
         cep: cep,
         estado: estado,
         cidade: cidade,
@@ -391,20 +417,6 @@ const EditProfile =  () => {
         complemento: complemento,
         bio: bio
       });
-
-      try {
-        updateProfile(auth.currentUser, {
-          displayName: name
-        })
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-      if(visibleModal=== false){
-        navigation.navigate('Perfil')
-      }else{
-        setVisibleModal(true)
-      }
-
       submitData();
     }
 
