@@ -162,8 +162,9 @@ const Docments = () => {
                                     style={styles.input}
                                     value={estado}
                                     maxLength={2}
+                                    keyboardType='default'
                                     textTransform='uppercase'
-                                    onChangeText={(text) => setEstado(text) && (error == false && estado ==="")}
+                                    onChangeText={(text) => setEstado(text) && (error == false)}
                                 />
 
                             {error == true && cidade==="" ? <Text style={styles.warningMessage}> Campo Obrigatório* </Text> : <Text style={styles.warningMessage}/>}

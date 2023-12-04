@@ -360,7 +360,7 @@ const NewPost = () => {
             </Modal>
 
             <View style={styles.containerButtonUpload}>
-              <TouchableOpacity style={styles.buttonUpload} onPress={submitData} onPressIn={() => setVisibleModal(true)}>
+              <TouchableOpacity style={styles.buttonUpload} onPress={submitData} onPressIn={() => {image === null ? undefined : setVisibleModal(true)}}>
                 <Text style={styles.btnUploadText}>Postar</Text>
                 </TouchableOpacity>
             </View>

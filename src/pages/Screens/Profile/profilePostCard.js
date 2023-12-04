@@ -68,7 +68,7 @@ export const ProfilePostCard = ({item}) => {
             <PostTime>{item.postTime}</PostTime>
           </UserInfoText2>
 
-          <View style={{justifyContent: "center", height: "50%", flexDirection: "row", alignItems: "center", marginLeft: "27%"}}>
+          <View style={{justifyContent: "center", height: "50%", flexDirection: "row", alignItems: "center", marginLeft: "20%"}}>
             <Image source={require('../../../assets/star_cheia.png')} style={{  width: "23%", height: "70%"}}/>
             <Text style={{fontSize: 15, fontWeight: "bold", color: "#A2ACC3", marginLeft: 5}}>{item.rating}</Text>
           </View>

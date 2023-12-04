@@ -112,7 +112,7 @@ export const PostCard = ({item}) => {
                 <InteractionText>Curtir</InteractionText>
               </Interaction>
     
-              <Interaction >
+              <Interaction onPress={()=> (setVisibleModal(true))}>
                 <FontAwesome style={{bottom: -3}} name='comment' size={25} color='#242E4E'/>
                 <InteractionText>Comentarios</InteractionText>
               </Interaction>
@@ -151,7 +151,7 @@ export const PostCard = ({item}) => {
                 <InteractionText>Curtir</InteractionText>
               </Interaction>
     
-              <Interaction >
+              <Interaction onPress={()=> (setVisibleModal(true))}>
                 <FontAwesome style={{bottom: -3}} name='comment' size={25} color='#242E4E'/>
                 <InteractionText>Comentarios</InteractionText>
               </Interaction>

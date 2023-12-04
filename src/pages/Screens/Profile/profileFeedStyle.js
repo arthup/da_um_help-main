@@ -63,7 +63,7 @@ export const UserInfoText = styled.View`
 export const UserInfoText2 = styled.View`
     flex-durection: column;
     justify-content: center;
-    margin-left: 10px;
+    margin-left: 8px;
 `;
 
 export const UserName = styled.Text`
